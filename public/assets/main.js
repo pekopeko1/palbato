@@ -294,6 +294,7 @@
   // src/application/battle_service.ts
   var BattleService = class {
     state;
+    onUpdate;
     constructor(player, enemy) {
       this.state = {
         playerMonster: player,
@@ -330,23 +331,28 @@
       if (!this.state.isFinished) {
         this.state.turnCount++;
         this.state.message = "\u3069\u3046\u3059\u308B\uFF1F";
+        if (this.onUpdate) this.onUpdate();
       }
     }
     async processMove(attacker, defender, moveInstance) {
       this.state.message = `${attacker.name} \u306E ${moveInstance.move.name}\uFF01`;
-      moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
+      if (this.onUpdate) this.onUpdate();
       await this.delay(800);
+      moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
       const result = calculateDamage(attacker, defender, moveInstance.move);
       defender.currentHp = Math.max(0, defender.currentHp - result.damage);
-      let resultMsg = "";
-      if (result.multiplier > 1) resultMsg += " \u3053\u3046\u304B\u306F \u3070\u3064\u3050\u3093\u3060\uFF01";
-      if (result.multiplier < 1 && result.multiplier > 0) resultMsg += " \u3053\u3046\u304B\u306F \u3044\u307E\u3072\u3068\u3064 \u307F\u305F\u3044\u3060\u2026";
-      if (result.isCritical) resultMsg += " \u304D\u3085\u3046\u3057\u3087\u306B \u3042\u305F\u3063\u305F\uFF01";
-      this.state.message = resultMsg || `${result.damage} \u306E \u30C0\u30E1\u30FC\u30B8\uFF01`;
+      let resultMsg = `${result.damage} \u306E \u30C0\u30E1\u30FC\u30B8\uFF01`;
+      if (result.multiplier > 1) resultMsg = "\u3053\u3046\u304B\u306F \u3070\u3064\u3050\u3093\u3060\uFF01";
+      if (result.multiplier < 1 && result.multiplier > 0) resultMsg = "\u3053\u3046\u304B\u306F \u3044\u307E\u3072\u3068\u3064 \u307F\u305F\u3044\u3060\u2026";
+      if (result.isCritical) resultMsg = "\u304D\u3085\u3046\u3057\u3087\u306B \u3042\u305F\u3063\u305F\uFF01";
+      this.state.message = resultMsg;
+      if (this.onUpdate) this.onUpdate();
+      await this.delay(800);
       if (defender.currentHp <= 0) {
         this.state.isFinished = true;
         this.state.winner = attacker === this.state.playerMonster ? "PLAYER" : "ENEMY";
-        this.state.message = `${defender.name} \u306F \u305F\u304A\u308C\u305F\uFF01 ${attacker.name} \u306E \u304B\u3061\uFF01`;
+        this.state.message = `${defender.name} \u306F \u305F\u304A\u308C\u305F\uFF01`;
+        if (this.onUpdate) this.onUpdate();
       }
     }
   };
@@ -405,6 +411,9 @@
       const playerMonster = createInstance(playerDef, 5);
       const enemyMonster = createInstance(enemyDef, 5);
       const battleService = new BattleService(playerMonster, enemyMonster);
+      battleService.onUpdate = () => {
+        renderer.render(battleService.getState());
+      };
       const updateUI = () => {
         const state = battleService.getState();
         renderer.render(state);

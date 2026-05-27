@@ -64,7 +64,11 @@ async function init() {
     const enemyMonster = createInstance(enemyDef, 5);
     
     const battleService = new BattleService(playerMonster, enemyMonster);
-    // ... rest of startBattle function remains mostly same, just pass both ...
+
+    // バトル進行中のUI更新をフックするためにコールバックを登録
+    battleService.onUpdate = () => {
+      renderer.render(battleService.getState());
+    };
 
     const updateUI = () => {
       const state = battleService.getState();

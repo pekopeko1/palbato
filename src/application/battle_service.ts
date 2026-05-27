@@ -3,6 +3,7 @@ import { calculateDamage } from '../domain/battle_logic';
 
 export class BattleService {
   private state: BattleState;
+  public onUpdate?: () => void;
 
   constructor(player: MonsterInstance, enemy: MonsterInstance) {
     this.state = {
@@ -32,13 +33,13 @@ export class BattleService {
 
     if (playerFirst) {
       await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
-      await this.delay(1000); // Pause for visibility
+      await this.delay(1000);
       if (!this.state.isFinished) {
         await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
       }
     } else {
       await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
-      await this.delay(1000); // Pause for visibility
+      await this.delay(1000);
       if (!this.state.isFinished) {
         await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
       }
@@ -47,33 +48,34 @@ export class BattleService {
     if (!this.state.isFinished) {
       this.state.turnCount++;
       this.state.message = "どうする？";
+      if (this.onUpdate) this.onUpdate();
     }
   }
-private async processMove(attacker: MonsterInstance, defender: MonsterInstance, moveInstance: MoveInstance) {
-  this.state.message = `${attacker.name} の ${moveInstance.move.name}！`;
-  // 更新を即時反映させるための工夫
-  // (UI描画メソッドを呼び出す必要があるが、現在の設計ではstate更新のみ)
-  // 画面にメッセージを表示する時間を確保するためにawaitを使用する
 
-  moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
+  private async processMove(attacker: MonsterInstance, defender: MonsterInstance, moveInstance: MoveInstance) {
+    this.state.message = `${attacker.name} の ${moveInstance.move.name}！`;
+    if (this.onUpdate) this.onUpdate();
+    await this.delay(800);
+    
+    moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
+    
+    const result = calculateDamage(attacker, defender, moveInstance.move);
+    defender.currentHp = Math.max(0, defender.currentHp - result.damage);
 
-  await this.delay(800); // 技使用メッセージを表示する時間
+    let resultMsg = `${result.damage} の ダメージ！`;
+    if (result.multiplier > 1) resultMsg = "こうかは ばつぐんだ！";
+    if (result.multiplier < 1 && result.multiplier > 0) resultMsg = "こうかは いまひとつ みたいだ…";
+    if (result.isCritical) resultMsg = "きゅうしょに あたった！";
+    
+    this.state.message = resultMsg;
+    if (this.onUpdate) this.onUpdate();
+    await this.delay(800);
 
-  const result = calculateDamage(attacker, defender, moveInstance.move);
-  defender.currentHp = Math.max(0, defender.currentHp - result.damage);
-
-  let resultMsg = "";
-  if (result.multiplier > 1) resultMsg += " こうかは ばつぐんだ！";
-  if (result.multiplier < 1 && result.multiplier > 0) resultMsg += " こうかは いまひとつ みたいだ…";
-  if (result.isCritical) resultMsg += " きゅうしょに あたった！";
-
-  this.state.message = resultMsg || `${result.damage} の ダメージ！`;
-
-  if (defender.currentHp <= 0) {
-    this.state.isFinished = true;
-    this.state.winner = attacker === this.state.playerMonster ? 'PLAYER' : 'ENEMY';
-    this.state.message = `${defender.name} は たおれた！ ${attacker.name} の かち！`;
+    if (defender.currentHp <= 0) {
+      this.state.isFinished = true;
+      this.state.winner = attacker === this.state.playerMonster ? 'PLAYER' : 'ENEMY';
+      this.state.message = `${defender.name} は たおれた！`;
+      if (this.onUpdate) this.onUpdate();
+    }
   }
-}
-
 }
