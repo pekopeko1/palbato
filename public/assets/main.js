@@ -4,43 +4,43 @@
   var moves_default = [
     {
       id: "tackle",
-      name: "Tackle",
+      name: "\u305F\u3044\u3042\u305F\u308A",
       type: "NORMAL",
       category: "PHYSICAL",
       power: 40,
       accuracy: 100,
       pp: 35,
-      description: "A physical attack in which the user charges and slams into the target with its whole body."
+      description: "\u304B\u3089\u3060\u3092\u3000\u3076\u3064\u3051\u3066\u3000\u3042\u3044\u3066\u3092\u3000\u3053\u3046\u3052\u304D\u3059\u308B\u3002"
     },
     {
       id: "ember",
-      name: "Ember",
+      name: "\u3072\u306E\u3053",
       type: "FIRE",
       category: "SPECIAL",
       power: 40,
       accuracy: 100,
       pp: 25,
-      description: "The target is attacked with small flames. This may also leave the target with a burn."
+      description: "\u3061\u3044\u3055\u306A\u3000\u3072\u306E\u3053\u3067\u3000\u3042\u3044\u3066\u3092\u3000\u3053\u3046\u3052\u304D\u3059\u308B\u3002\u3000\u3084\u3051\u3069\u306B\u3000\u3055\u305B\u308B\u3053\u3068\u304C\u3000\u3042\u308B\u3002"
     },
     {
       id: "bubble",
-      name: "Bubble",
+      name: "\u3042\u308F",
       type: "WATER",
       category: "SPECIAL",
       power: 40,
       accuracy: 100,
       pp: 30,
-      description: "A spray of countless bubbles is jetted at the opposing Pok\xE9mon. This may also lower their Speed stat."
+      description: "\u304A\u304A\u304F\u306E\u3000\u3042\u308F\u3092\u3000\u3075\u304D\u3060\u3057\u3066\u3000\u3053\u3046\u3052\u304D\u3059\u308B\u3002\u3000\u3059\u3070\u3084\u3055\u3092\u3000\u3055\u3052\u308B\u3053\u3068\u304C\u3000\u3042\u308B\u3002"
     },
     {
       id: "vine_whip",
-      name: "Vine Whip",
+      name: "\u3064\u308B\u306E\u30E0\u30C1",
       type: "GRASS",
       category: "PHYSICAL",
       power: 45,
       accuracy: 100,
       pp: 25,
-      description: "The target is struck with slender, whip-like vines to inflict damage."
+      description: "\u307B\u305D\u3044\u3000\u3064\u308B\u3092\u3000\u30E0\u30C1\u306E\u3088\u3046\u306B\u3000\u3057\u306A\u3089\u305B\u3066\u3000\u3042\u3044\u3066\u3092\u3000\u3053\u3046\u3052\u304D\u3059\u308B\u3002"
     }
   ];
 
