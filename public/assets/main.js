@@ -131,6 +131,8 @@
     async loadAll() {
       moves_default.forEach((move) => this.moves.set(move.id, move));
       monsters_default.forEach((monster) => this.monsters.set(monster.id, monster));
+      const sprites = Array.from(this.monsters.values()).flatMap((m) => [m.frontSprite, m.backSprite]);
+      await Promise.all(sprites.map((s) => this.loadImage(s).catch(() => null)));
     }
     async loadImage(url) {
       if (this.images.has(url)) return this.images.get(url);
@@ -140,9 +142,12 @@
           this.images.set(url, img);
           resolve(img);
         };
-        img.onerror = reject;
+        img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
         img.src = url;
       });
+    }
+    getImage(url) {
+      return this.images.get(url);
     }
     getMonster(id) {
       return this.monsters.get(id);
@@ -199,16 +204,17 @@
   // src/infrastructure/canvas_renderer.ts
   var CanvasRenderer = class {
     ctx;
+    loader;
     width = 240;
     height = 160;
-    constructor(canvas) {
+    constructor(canvas, loader) {
       this.ctx = canvas.getContext("2d");
+      this.loader = loader;
       canvas.width = this.width;
       canvas.height = this.height;
       this.ctx.imageSmoothingEnabled = false;
     }
     render(state) {
-      console.log("Rendering state:", state);
       this.drawBackground();
       this.drawMonsters(state.playerMonster, state.enemyMonster);
       this.drawUI(state);
@@ -223,17 +229,23 @@
       this.ctx.strokeRect(2, 114, this.width - 4, 44);
     }
     drawMonsters(player, enemy) {
-      const draw = (id, x, y) => {
-        const art = MonsterArt[id];
-        if (art) art(this.ctx, x, y, 60);
-        else {
-          this.ctx.fillStyle = "#999";
-          this.ctx.fillRect(x, y, 60, 60);
+      const draw = (def, x, y, isPlayer) => {
+        const url = isPlayer ? def.backSprite : def.frontSprite;
+        const img = this.loader.getImage(url);
+        if (img) {
+          this.ctx.drawImage(img, x, y, 60, 60);
+        } else {
+          const art = MonsterArt[def.id];
+          if (art) art(this.ctx, x, y, 60);
+          else {
+            this.ctx.fillStyle = "#999";
+            this.ctx.fillRect(x, y, 60, 60);
+          }
         }
       };
-      draw(enemy.definitionId, 160, 20);
+      draw(this.loader.getMonster(enemy.definitionId), 160, 20, false);
       this.drawInfoBox(enemy, 20, 20);
-      draw(player.definitionId, 20, 80);
+      draw(this.loader.getMonster(player.definitionId), 20, 80, true);
       this.drawInfoBox(player, 140, 90);
     }
     drawInfoBox(monster, x, y) {
@@ -380,7 +392,7 @@
     const loader = new AssetLoader();
     await loader.loadAll();
     const canvas = document.getElementById("game-canvas");
-    const renderer = new CanvasRenderer(canvas);
+    const renderer = new CanvasRenderer(canvas, loader);
     const createInstance = (def, level) => ({
       definitionId: def.id,
       name: def.name,

@@ -8,7 +8,7 @@ async function init() {
   await loader.loadAll();
 
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
-  const renderer = new CanvasRenderer(canvas);
+  const renderer = new CanvasRenderer(canvas, loader);
 
   const createInstance = (def: any, level: number): MonsterInstance => ({
     definitionId: def.id,

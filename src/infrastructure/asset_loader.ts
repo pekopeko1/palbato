@@ -10,6 +10,10 @@ export class AssetLoader {
   async loadAll() {
     (movesData as Move[]).forEach(move => this.moves.set(move.id, move));
     (monstersData as MonsterDefinition[]).forEach(monster => this.monsters.set(monster.id, monster));
+    
+    // Preload all monster sprites
+    const sprites = Array.from(this.monsters.values()).flatMap(m => [m.frontSprite, m.backSprite]);
+    await Promise.all(sprites.map(s => this.loadImage(s).catch(() => null)));
   }
 
   async loadImage(url: string): Promise<HTMLImageElement> {
@@ -21,9 +25,13 @@ export class AssetLoader {
         this.images.set(url, img);
         resolve(img);
       };
-      img.onerror = reject;
+      img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
       img.src = url;
     });
+  }
+
+  getImage(url: string): HTMLImageElement | undefined {
+    return this.images.get(url);
   }
 
   getMonster(id: string): MonsterDefinition | undefined {
