@@ -138,21 +138,36 @@
   var MonsterArt = {
     bulbasaur: (ctx, x, y, size) => {
       ctx.fillStyle = "#78C850";
-      ctx.fillRect(x + size * 0.2, y + size * 0.4, size * 0.6, size * 0.5);
+      ctx.beginPath();
+      ctx.arc(x + size * 0.5, y + size * 0.6, size * 0.3, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = "#A0C800";
-      ctx.fillRect(x + size * 0.3, y + size * 0.1, size * 0.4, size * 0.3);
+      ctx.beginPath();
+      ctx.arc(x + size * 0.6, y + size * 0.3, size * 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#FFF";
+      ctx.fillRect(x + size * 0.6, y + size * 0.5, size * 0.05, size * 0.05);
     },
     charmander: (ctx, x, y, size) => {
       ctx.fillStyle = "#F08030";
-      ctx.fillRect(x + size * 0.2, y + size * 0.4, size * 0.6, size * 0.5);
+      ctx.fillRect(x + size * 0.3, y + size * 0.4, size * 0.4, size * 0.4);
+      ctx.beginPath();
+      ctx.arc(x + size * 0.5, y + size * 0.3, size * 0.2, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = "#F05030";
-      ctx.fillRect(x + size * 0.7, y + size * 0.8, size * 0.1, size * 0.1);
+      ctx.beginPath();
+      ctx.arc(x + size * 0.8, y + size * 0.7, size * 0.1, 0, Math.PI * 2);
+      ctx.fill();
     },
     squirtle: (ctx, x, y, size) => {
       ctx.fillStyle = "#6890F0";
-      ctx.fillRect(x + size * 0.2, y + size * 0.4, size * 0.6, size * 0.5);
+      ctx.beginPath();
+      ctx.arc(x + size * 0.5, y + size * 0.6, size * 0.25, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = "#4060A0";
-      ctx.fillRect(x + size * 0.2, y + size * 0.5, size * 0.6, size * 0.3);
+      ctx.fillRect(x + size * 0.3, y + size * 0.4, size * 0.4, size * 0.3);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(x + size * 0.6, y + size * 0.5, size * 0.05, size * 0.05);
     }
   };
 
