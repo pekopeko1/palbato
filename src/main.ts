@@ -52,14 +52,19 @@ async function init() {
     if (state.isFinished) return;
 
     // Main Menu
-    const options = ['FIGHT', 'BAG', 'MON', 'RUN'];
-    options.forEach((opt, i) => {
+    const options = [
+      { label: 'たたかう', action: 'FIGHT' },
+      { label: 'バッグ', action: 'BAG' },
+      { label: 'ポケモン', action: 'MON' },
+      { label: 'にげる', action: 'RUN' }
+    ];
+    options.forEach((opt) => {
       const btn = document.createElement('div');
       btn.className = 'move-btn';
-      btn.innerText = opt;
+      btn.innerText = opt.label;
       btn.onclick = () => {
-        if (opt === 'FIGHT') showMoves();
-        else alert('Not implemented yet!');
+        if (opt.action === 'FIGHT') showMoves();
+        else alert('まだ実装されていません！');
       };
       ui.appendChild(btn);
     });
@@ -83,7 +88,7 @@ async function init() {
     
     const backBtn = document.createElement('div');
     backBtn.className = 'move-btn';
-    backBtn.innerText = 'BACK';
+    backBtn.innerText = 'もどる';
     backBtn.onclick = updateUI;
     ui.appendChild(backBtn);
   };

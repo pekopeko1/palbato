@@ -329,14 +329,19 @@
       const ui = document.getElementById("ui-overlay");
       ui.innerHTML = "";
       if (state.isFinished) return;
-      const options = ["FIGHT", "BAG", "MON", "RUN"];
-      options.forEach((opt, i) => {
+      const options = [
+        { label: "\u305F\u305F\u304B\u3046", action: "FIGHT" },
+        { label: "\u30D0\u30C3\u30B0", action: "BAG" },
+        { label: "\u30DD\u30B1\u30E2\u30F3", action: "MON" },
+        { label: "\u306B\u3052\u308B", action: "RUN" }
+      ];
+      options.forEach((opt) => {
         const btn = document.createElement("div");
         btn.className = "move-btn";
-        btn.innerText = opt;
+        btn.innerText = opt.label;
         btn.onclick = () => {
-          if (opt === "FIGHT") showMoves();
-          else alert("Not implemented yet!");
+          if (opt.action === "FIGHT") showMoves();
+          else alert("\u307E\u3060\u5B9F\u88C5\u3055\u308C\u3066\u3044\u307E\u305B\u3093\uFF01");
         };
         ui.appendChild(btn);
       });
@@ -357,7 +362,7 @@
       });
       const backBtn = document.createElement("div");
       backBtn.className = "move-btn";
-      backBtn.innerText = "BACK";
+      backBtn.innerText = "\u3082\u3069\u308B";
       backBtn.onclick = updateUI;
       ui.appendChild(backBtn);
     };
