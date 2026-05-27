@@ -68,15 +68,15 @@
     }
     drawMonsters(player, enemy) {
       this.ctx.fillStyle = "#555";
-      this.ctx.fillRect(140, 20, 60, 60);
+      this.ctx.fillRect(160, 20, 60, 60);
       this.drawHealthBar(enemy, 20, 20);
       this.ctx.fillStyle = "#888";
-      this.ctx.fillRect(40, 50, 60, 60);
-      this.drawHealthBar(player, 130, 80);
+      this.ctx.fillRect(20, 50, 60, 60);
+      this.drawHealthBar(player, 140, 70);
     }
     drawHealthBar(monster, x, y) {
       const barWidth = 80;
-      const barHeight = 10;
+      const barHeight = 8;
       const hpRatio = monster.currentHp / monster.stats.hp;
       this.ctx.fillStyle = "#FFF";
       this.ctx.fillRect(x, y, barWidth, barHeight);
@@ -88,7 +88,7 @@
       this.ctx.fillStyle = "#000";
       this.ctx.font = "8px monospace";
       this.ctx.fillText(monster.name, x, y - 5);
-      this.ctx.fillText(`Lv${monster.level}`, x + barWidth - 20, y - 5);
+      this.ctx.fillText(`Lv${monster.level}`, x + barWidth - 25, y - 5);
     }
     drawUI(state) {
       this.ctx.fillStyle = "#000";
