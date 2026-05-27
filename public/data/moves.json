@@ -1,0 +1,42 @@
+[
+  {
+    "id": "tackle",
+    "name": "Tackle",
+    "type": "NORMAL",
+    "category": "PHYSICAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35,
+    "description": "A physical attack in which the user charges and slams into the target with its whole body."
+  },
+  {
+    "id": "ember",
+    "name": "Ember",
+    "type": "FIRE",
+    "category": "SPECIAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25,
+    "description": "The target is attacked with small flames. This may also leave the target with a burn."
+  },
+  {
+    "id": "bubble",
+    "name": "Bubble",
+    "type": "WATER",
+    "category": "SPECIAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "description": "A spray of countless bubbles is jetted at the opposing Pokémon. This may also lower their Speed stat."
+  },
+  {
+    "id": "vine_whip",
+    "name": "Vine Whip",
+    "type": "GRASS",
+    "category": "PHYSICAL",
+    "power": 45,
+    "accuracy": 100,
+    "pp": 25,
+    "description": "The target is struck with slender, whip-like vines to inflict damage."
+  }
+]
