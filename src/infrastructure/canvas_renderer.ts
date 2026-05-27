@@ -32,19 +32,19 @@ export class CanvasRenderer {
 
   private drawMonsters(player: MonsterInstance, enemy: MonsterInstance) {
     // Enemy (top right)
-    this.ctx.fillStyle = '#555'; // Placeholder
-    this.ctx.fillRect(140, 20, 60, 60);
+    this.ctx.fillStyle = '#555';
+    this.ctx.fillRect(160, 20, 60, 60);
     this.drawHealthBar(enemy, 20, 20);
 
     // Player (bottom left)
-    this.ctx.fillStyle = '#888'; // Placeholder
-    this.ctx.fillRect(40, 50, 60, 60);
-    this.drawHealthBar(player, 130, 80);
+    this.ctx.fillStyle = '#888';
+    this.ctx.fillRect(20, 50, 60, 60);
+    this.drawHealthBar(player, 140, 70);
   }
 
   private drawHealthBar(monster: MonsterInstance, x: number, y: number) {
     const barWidth = 80;
-    const barHeight = 10;
+    const barHeight = 8;
     const hpRatio = monster.currentHp / monster.stats.hp;
 
     this.ctx.fillStyle = '#FFF';
@@ -59,7 +59,7 @@ export class CanvasRenderer {
     this.ctx.fillStyle = '#000';
     this.ctx.font = '8px monospace';
     this.ctx.fillText(monster.name, x, y - 5);
-    this.ctx.fillText(`Lv${monster.level}`, x + barWidth - 20, y - 5);
+    this.ctx.fillText(`Lv${monster.level}`, x + barWidth - 25, y - 5);
   }
 
   private drawUI(state: BattleState) {
