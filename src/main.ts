@@ -10,10 +10,6 @@ async function init() {
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   const renderer = new CanvasRenderer(canvas);
 
-  // Initialize monsters
-  const charDef = loader.getMonster('charmander')!;
-  const bulbDef = loader.getMonster('bulbasaur')!;
-
   const createInstance = (def: any, level: number): MonsterInstance => ({
     definitionId: def.id,
     name: def.name,
@@ -35,75 +31,82 @@ async function init() {
     status: 'NONE'
   });
 
-  const playerMonster = createInstance(charDef, 5);
-  const enemyMonster = createInstance(bulbDef, 5);
-
-  const battleService = new BattleService(playerMonster, enemyMonster);
-
-  const updateUI = () => {
-    console.log('updateUI called');
-    const state = battleService.getState();
-    console.log('Battle state:', state);
-    renderer.render(state);
-
+  const showSelection = () => {
     const ui = document.getElementById('ui-overlay')!;
-    ui.innerHTML = '';
-
-    if (state.isFinished) return;
-
-    // Main Menu
-    const options = [
-      { label: 'たたかう', action: 'FIGHT' },
-      { label: 'バッグ', action: 'BAG' },
-      { label: 'ポケモン', action: 'MON' },
-      { label: 'にげる', action: 'RUN' }
-    ];
-    options.forEach((opt) => {
+    ui.innerHTML = 'どのポケモンにする？';
+    
+    ['bulbasaur', 'charmander', 'squirtle'].forEach(id => {
+      const def = loader.getMonster(id)!;
       const btn = document.createElement('div');
       btn.className = 'move-btn';
-      btn.innerText = opt.label;
-      btn.onclick = () => {
-        if (opt.action === 'FIGHT') showMoves();
-        else alert('まだ実装されていません！');
-      };
+      btn.innerText = def.name;
+      btn.onclick = () => startBattle(def);
       ui.appendChild(btn);
     });
   };
 
-  const showMoves = () => {
-    const ui = document.getElementById('ui-overlay')!;
-    ui.innerHTML = '';
-    
-    playerMonster.moves.forEach((moveInstance) => {
-      const btn = document.createElement('div');
-      btn.className = 'move-btn';
-      btn.style.flexDirection = 'column';
-      btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
-      btn.onclick = async () => {
-        // メニューを消して、バトル進行中のメッセージを表示できるようにする
-        const ui = document.getElementById('ui-overlay')!;
-        ui.innerHTML = 'バトル中...';
-        
-        await battleService.executeTurn(moveInstance);
-        
-        // 処理が終わるまで少し待ってからメッセージを更新
-        // ※ 本来はアニメーションループなどで行うが、今回はステート更新を反映
-        renderer.render(battleService.getState());
-        await new Promise(r => setTimeout(r, 1000));
-        
-        updateUI();
-      };
-      ui.appendChild(btn);
-    });
-    
-    const backBtn = document.createElement('div');
-    backBtn.className = 'move-btn';
-    backBtn.innerText = 'もどる';
-    backBtn.onclick = updateUI;
-    ui.appendChild(backBtn);
+  const startBattle = (playerDef: any) => {
+    const playerMonster = createInstance(playerDef, 5);
+    const enemyMonster = createInstance(loader.getMonster('bulbasaur')!, 5); // Simple enemy
+
+    const battleService = new BattleService(playerMonster, enemyMonster);
+
+    const updateUI = () => {
+      const state = battleService.getState();
+      renderer.render(state);
+      const ui = document.getElementById('ui-overlay')!;
+      ui.innerHTML = '';
+      if (state.isFinished) {
+        ui.innerText = state.message;
+        return;
+      }
+      
+      const options = [
+        { label: 'たたかう', action: 'FIGHT' },
+        { label: 'バッグ', action: 'BAG' },
+        { label: 'ポケモン', action: 'MON' },
+        { label: 'にげる', action: 'RUN' }
+      ];
+      options.forEach((opt) => {
+        const btn = document.createElement('div');
+        btn.className = 'move-btn';
+        btn.innerText = opt.label;
+        btn.onclick = () => {
+          if (opt.action === 'FIGHT') showMoves(battleService, updateUI, playerMonster);
+          else alert('まだ実装されていません！');
+        };
+        ui.appendChild(btn);
+      });
+    };
+
+    const showMoves = (service: BattleService, updateUI: () => void, playerMonster: MonsterInstance) => {
+      const ui = document.getElementById('ui-overlay')!;
+      ui.innerHTML = '';
+      playerMonster.moves.forEach((moveInstance) => {
+        const btn = document.createElement('div');
+        btn.className = 'move-btn';
+        btn.style.flexDirection = 'column';
+        btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
+        btn.onclick = async () => {
+          ui.innerHTML = 'バトル中...';
+          await service.executeTurn(moveInstance);
+          renderer.render(service.getState());
+          await new Promise(r => setTimeout(r, 1000));
+          updateUI();
+        };
+        ui.appendChild(btn);
+      });
+      const backBtn = document.createElement('div');
+      backBtn.className = 'move-btn';
+      backBtn.innerText = 'もどる';
+      backBtn.onclick = updateUI;
+      ui.appendChild(backBtn);
+    };
+
+    updateUI();
   };
 
-  updateUI();
+  showSelection();
 }
 
 init().catch(console.error);

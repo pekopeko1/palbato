@@ -357,8 +357,6 @@
     await loader.loadAll();
     const canvas = document.getElementById("game-canvas");
     const renderer = new CanvasRenderer(canvas);
-    const charDef = loader.getMonster("charmander");
-    const bulbDef = loader.getMonster("bulbasaur");
     const createInstance = (def, level) => ({
       definitionId: def.id,
       name: def.name,
@@ -379,59 +377,74 @@
       }).filter((m) => m !== null),
       status: "NONE"
     });
-    const playerMonster = createInstance(charDef, 5);
-    const enemyMonster = createInstance(bulbDef, 5);
-    const battleService = new BattleService(playerMonster, enemyMonster);
-    const updateUI = () => {
-      console.log("updateUI called");
-      const state = battleService.getState();
-      console.log("Battle state:", state);
-      renderer.render(state);
+    const showSelection = () => {
       const ui = document.getElementById("ui-overlay");
-      ui.innerHTML = "";
-      if (state.isFinished) return;
-      const options = [
-        { label: "\u305F\u305F\u304B\u3046", action: "FIGHT" },
-        { label: "\u30D0\u30C3\u30B0", action: "BAG" },
-        { label: "\u30DD\u30B1\u30E2\u30F3", action: "MON" },
-        { label: "\u306B\u3052\u308B", action: "RUN" }
-      ];
-      options.forEach((opt) => {
+      ui.innerHTML = "\u3069\u306E\u30DD\u30B1\u30E2\u30F3\u306B\u3059\u308B\uFF1F";
+      ["bulbasaur", "charmander", "squirtle"].forEach((id) => {
+        const def = loader.getMonster(id);
         const btn = document.createElement("div");
         btn.className = "move-btn";
-        btn.innerText = opt.label;
-        btn.onclick = () => {
-          if (opt.action === "FIGHT") showMoves();
-          else alert("\u307E\u3060\u5B9F\u88C5\u3055\u308C\u3066\u3044\u307E\u305B\u3093\uFF01");
-        };
+        btn.innerText = def.name;
+        btn.onclick = () => startBattle(def);
         ui.appendChild(btn);
       });
     };
-    const showMoves = () => {
-      const ui = document.getElementById("ui-overlay");
-      ui.innerHTML = "";
-      playerMonster.moves.forEach((moveInstance) => {
-        const btn = document.createElement("div");
-        btn.className = "move-btn";
-        btn.style.flexDirection = "column";
-        btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
-        btn.onclick = async () => {
-          const ui2 = document.getElementById("ui-overlay");
-          ui2.innerHTML = "\u30D0\u30C8\u30EB\u4E2D...";
-          await battleService.executeTurn(moveInstance);
-          renderer.render(battleService.getState());
-          await new Promise((r) => setTimeout(r, 1e3));
-          updateUI();
-        };
-        ui.appendChild(btn);
-      });
-      const backBtn = document.createElement("div");
-      backBtn.className = "move-btn";
-      backBtn.innerText = "\u3082\u3069\u308B";
-      backBtn.onclick = updateUI;
-      ui.appendChild(backBtn);
+    const startBattle = (playerDef) => {
+      const playerMonster = createInstance(playerDef, 5);
+      const enemyMonster = createInstance(loader.getMonster("bulbasaur"), 5);
+      const battleService = new BattleService(playerMonster, enemyMonster);
+      const updateUI = () => {
+        const state = battleService.getState();
+        renderer.render(state);
+        const ui = document.getElementById("ui-overlay");
+        ui.innerHTML = "";
+        if (state.isFinished) {
+          ui.innerText = state.message;
+          return;
+        }
+        const options = [
+          { label: "\u305F\u305F\u304B\u3046", action: "FIGHT" },
+          { label: "\u30D0\u30C3\u30B0", action: "BAG" },
+          { label: "\u30DD\u30B1\u30E2\u30F3", action: "MON" },
+          { label: "\u306B\u3052\u308B", action: "RUN" }
+        ];
+        options.forEach((opt) => {
+          const btn = document.createElement("div");
+          btn.className = "move-btn";
+          btn.innerText = opt.label;
+          btn.onclick = () => {
+            if (opt.action === "FIGHT") showMoves(battleService, updateUI, playerMonster);
+            else alert("\u307E\u3060\u5B9F\u88C5\u3055\u308C\u3066\u3044\u307E\u305B\u3093\uFF01");
+          };
+          ui.appendChild(btn);
+        });
+      };
+      const showMoves = (service, updateUI2, playerMonster2) => {
+        const ui = document.getElementById("ui-overlay");
+        ui.innerHTML = "";
+        playerMonster2.moves.forEach((moveInstance) => {
+          const btn = document.createElement("div");
+          btn.className = "move-btn";
+          btn.style.flexDirection = "column";
+          btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
+          btn.onclick = async () => {
+            ui.innerHTML = "\u30D0\u30C8\u30EB\u4E2D...";
+            await service.executeTurn(moveInstance);
+            renderer.render(service.getState());
+            await new Promise((r) => setTimeout(r, 1e3));
+            updateUI2();
+          };
+          ui.appendChild(btn);
+        });
+        const backBtn = document.createElement("div");
+        backBtn.className = "move-btn";
+        backBtn.innerText = "\u3082\u3069\u308B";
+        backBtn.onclick = updateUI2;
+        ui.appendChild(backBtn);
+      };
+      updateUI();
     };
-    updateUI();
+    showSelection();
   }
   init().catch(console.error);
 })();
