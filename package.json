@@ -4,7 +4,7 @@
   "description": "Pokemon FireRed style turn-based battle game",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --outfile=public/assets/main.js --sourcemap",
+    "build": "esbuild src/main.ts --bundle --outfile=public/assets/main.js",
     "test": "vitest run"
   },
   "keywords": [],

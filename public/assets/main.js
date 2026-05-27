@@ -53,6 +53,7 @@
       this.ctx.imageSmoothingEnabled = false;
     }
     render(state) {
+      console.log("Rendering state:", state);
       this.drawBackground();
       this.drawMonsters(state.playerMonster, state.enemyMonster);
       this.drawUI(state);
@@ -228,7 +229,9 @@
     const enemyMonster = createInstance(bulbDef, 5);
     const battleService = new BattleService(playerMonster, enemyMonster);
     const updateUI = () => {
+      console.log("updateUI called");
       const state = battleService.getState();
+      console.log("Battle state:", state);
       renderer.render(state);
       const ui = document.getElementById("ui-overlay");
       ui.innerHTML = "";

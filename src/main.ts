@@ -41,7 +41,9 @@ async function init() {
   const battleService = new BattleService(playerMonster, enemyMonster);
 
   const updateUI = () => {
+    console.log('updateUI called');
     const state = battleService.getState();
+    console.log('Battle state:', state);
     renderer.render(state);
 
     const ui = document.getElementById('ui-overlay')!;

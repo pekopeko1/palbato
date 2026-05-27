@@ -13,6 +13,7 @@ export class CanvasRenderer {
   }
 
   render(state: BattleState) {
+    console.log('Rendering state:', state);
     this.drawBackground();
     this.drawMonsters(state.playerMonster, state.enemyMonster);
     this.drawUI(state);
