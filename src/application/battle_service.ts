@@ -19,23 +19,23 @@ export class BattleService {
     return this.state;
   }
 
-  async executeTurn(playerMove: Move) {
+  async executeTurn(playerMoveInstance: MoveInstance) {
     if (this.state.isFinished) return;
 
-    const enemyMove = this.state.enemyMonster.moves[0]!; // Simple AI: always first move
+    const enemyMoveInstance = this.state.enemyMonster.moves[0]!; // Simple AI
 
-    // Decide order based on speed
+    // Decide order
     const playerFirst = this.state.playerMonster.stats.speed >= this.state.enemyMonster.stats.speed;
 
     if (playerFirst) {
-      await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMove);
+      await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
       if (!this.state.isFinished) {
-        await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMove);
+        await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
       }
     } else {
-      await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMove);
+      await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
       if (!this.state.isFinished) {
-        await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMove);
+        await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
       }
     }
 
@@ -45,11 +45,13 @@ export class BattleService {
     }
   }
 
-  private async processMove(attacker: MonsterInstance, defender: MonsterInstance, move: Move) {
-    this.state.message = `${attacker.name} used ${move.name}!`;
-    // In a real game, we'd wait here for animation
+  private async processMove(attacker: MonsterInstance, defender: MonsterInstance, moveInstance: MoveInstance) {
+    this.state.message = `${attacker.name} used ${moveInstance.move.name}!`;
     
-    const result = calculateDamage(attacker, defender, move);
+    // Decrement PP
+    moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
+    
+    const result = calculateDamage(attacker, defender, moveInstance.move);
     defender.currentHp = Math.max(0, defender.currentHp - result.damage);
 
     if (result.multiplier > 1) this.state.message += " It's super effective!";

@@ -19,7 +19,7 @@ async function init() {
     name: def.name,
     types: def.types,
     level: level,
-    currentHp: def.baseStats.hp + level * 2, // Simplified stats
+    currentHp: def.baseStats.hp + level * 2,
     stats: {
       hp: def.baseStats.hp + level * 2,
       attack: def.baseStats.attack + level,
@@ -28,7 +28,11 @@ async function init() {
       spDefense: def.baseStats.spDefense + level,
       speed: def.baseStats.speed + level,
     },
-    moves: def.learnset.map((l: any) => loader.getMove(l.moveId) || null).slice(0, 4)
+    moves: def.learnset.map((l: any) => {
+      const move = loader.getMove(l.moveId);
+      return move ? { move, currentPp: move.pp } : null;
+    }).filter((m: any) => m !== null),
+    status: 'NONE'
   });
 
   const playerMonster = createInstance(charDef, 5);
@@ -40,20 +44,46 @@ async function init() {
     const state = battleService.getState();
     renderer.render(state);
 
-    playerMonster.moves.forEach((move, i) => {
-      const btn = document.getElementById(`move-${i}`) as HTMLDivElement;
-      if (move) {
-        btn.innerText = move.name;
-        btn.style.display = 'flex';
-        btn.onclick = async () => {
-          if (state.isFinished) return;
-          await battleService.executeTurn(move);
-          updateUI();
-        };
-      } else {
-        btn.style.display = 'none';
-      }
+    const ui = document.getElementById('ui-overlay')!;
+    ui.innerHTML = '';
+
+    if (state.isFinished) return;
+
+    // Main Menu
+    const options = ['FIGHT', 'BAG', 'MON', 'RUN'];
+    options.forEach((opt, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'move-btn';
+      btn.innerText = opt;
+      btn.onclick = () => {
+        if (opt === 'FIGHT') showMoves();
+        else alert('Not implemented yet!');
+      };
+      ui.appendChild(btn);
     });
+  };
+
+  const showMoves = () => {
+    const ui = document.getElementById('ui-overlay')!;
+    ui.innerHTML = '';
+    
+    playerMonster.moves.forEach((moveInstance) => {
+      const btn = document.createElement('div');
+      btn.className = 'move-btn';
+      btn.style.flexDirection = 'column';
+      btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
+      btn.onclick = async () => {
+        await battleService.executeTurn(moveInstance);
+        updateUI();
+      };
+      ui.appendChild(btn);
+    });
+    
+    const backBtn = document.createElement('div');
+    backBtn.className = 'move-btn';
+    backBtn.innerText = 'BACK';
+    backBtn.onclick = updateUI;
+    ui.appendChild(backBtn);
   };
 
   updateUI();

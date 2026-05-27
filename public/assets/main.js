@@ -160,19 +160,19 @@
     getState() {
       return this.state;
     }
-    async executeTurn(playerMove) {
+    async executeTurn(playerMoveInstance) {
       if (this.state.isFinished) return;
-      const enemyMove = this.state.enemyMonster.moves[0];
+      const enemyMoveInstance = this.state.enemyMonster.moves[0];
       const playerFirst = this.state.playerMonster.stats.speed >= this.state.enemyMonster.stats.speed;
       if (playerFirst) {
-        await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMove);
+        await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
         if (!this.state.isFinished) {
-          await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMove);
+          await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
         }
       } else {
-        await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMove);
+        await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
         if (!this.state.isFinished) {
-          await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMove);
+          await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
         }
       }
       if (!this.state.isFinished) {
@@ -180,9 +180,10 @@
         this.state.message = "What will you do?";
       }
     }
-    async processMove(attacker, defender, move) {
-      this.state.message = `${attacker.name} used ${move.name}!`;
-      const result = calculateDamage(attacker, defender, move);
+    async processMove(attacker, defender, moveInstance) {
+      this.state.message = `${attacker.name} used ${moveInstance.move.name}!`;
+      moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
+      const result = calculateDamage(attacker, defender, moveInstance.move);
       defender.currentHp = Math.max(0, defender.currentHp - result.damage);
       if (result.multiplier > 1) this.state.message += " It's super effective!";
       if (result.multiplier < 1 && result.multiplier > 0) this.state.message += " It's not very effective...";
@@ -209,7 +210,6 @@
       types: def.types,
       level,
       currentHp: def.baseStats.hp + level * 2,
-      // Simplified stats
       stats: {
         hp: def.baseStats.hp + level * 2,
         attack: def.baseStats.attack + level,
@@ -218,7 +218,11 @@
         spDefense: def.baseStats.spDefense + level,
         speed: def.baseStats.speed + level
       },
-      moves: def.learnset.map((l) => loader.getMove(l.moveId) || null).slice(0, 4)
+      moves: def.learnset.map((l) => {
+        const move = loader.getMove(l.moveId);
+        return move ? { move, currentPp: move.pp } : null;
+      }).filter((m) => m !== null),
+      status: "NONE"
     });
     const playerMonster = createInstance(charDef, 5);
     const enemyMonster = createInstance(bulbDef, 5);
@@ -226,20 +230,40 @@
     const updateUI = () => {
       const state = battleService.getState();
       renderer.render(state);
-      playerMonster.moves.forEach((move, i) => {
-        const btn = document.getElementById(`move-${i}`);
-        if (move) {
-          btn.innerText = move.name;
-          btn.style.display = "flex";
-          btn.onclick = async () => {
-            if (state.isFinished) return;
-            await battleService.executeTurn(move);
-            updateUI();
-          };
-        } else {
-          btn.style.display = "none";
-        }
+      const ui = document.getElementById("ui-overlay");
+      ui.innerHTML = "";
+      if (state.isFinished) return;
+      const options = ["FIGHT", "BAG", "MON", "RUN"];
+      options.forEach((opt, i) => {
+        const btn = document.createElement("div");
+        btn.className = "move-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+          if (opt === "FIGHT") showMoves();
+          else alert("Not implemented yet!");
+        };
+        ui.appendChild(btn);
       });
+    };
+    const showMoves = () => {
+      const ui = document.getElementById("ui-overlay");
+      ui.innerHTML = "";
+      playerMonster.moves.forEach((moveInstance) => {
+        const btn = document.createElement("div");
+        btn.className = "move-btn";
+        btn.style.flexDirection = "column";
+        btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
+        btn.onclick = async () => {
+          await battleService.executeTurn(moveInstance);
+          updateUI();
+        };
+        ui.appendChild(btn);
+      });
+      const backBtn = document.createElement("div");
+      backBtn.className = "move-btn";
+      backBtn.innerText = "BACK";
+      backBtn.onclick = updateUI;
+      ui.appendChild(backBtn);
     };
     updateUI();
   }

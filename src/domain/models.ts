@@ -4,6 +4,8 @@ export type ElementType =
   | 'PSYCHIC' | 'BUG' | 'ROCK' | 'GHOST' | 'DRAGON' 
   | 'STEEL' | 'DARK';
 
+export type StatusEffect = 'NONE' | 'POISON' | 'PARALYSIS' | 'SLEEP' | 'BURN' | 'FROZEN';
+
 export interface Stats {
   hp: number;
   attack: number;
@@ -34,6 +36,11 @@ export interface MonsterDefinition {
   backSprite: string;
 }
 
+export interface MoveInstance {
+  move: Move;
+  currentPp: number;
+}
+
 export interface MonsterInstance {
   definitionId: string;
   name: string;
@@ -41,7 +48,8 @@ export interface MonsterInstance {
   level: number;
   currentHp: number;
   stats: Stats;
-  moves: (Move | null)[];
+  moves: MoveInstance[];
+  status: StatusEffect;
 }
 
 export interface BattleState {
