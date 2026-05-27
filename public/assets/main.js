@@ -134,6 +134,28 @@
     }
   };
 
+  // src/infrastructure/monster_art.ts
+  var MonsterArt = {
+    bulbasaur: (ctx, x, y, size) => {
+      ctx.fillStyle = "#78C850";
+      ctx.fillRect(x + size * 0.2, y + size * 0.4, size * 0.6, size * 0.5);
+      ctx.fillStyle = "#A0C800";
+      ctx.fillRect(x + size * 0.3, y + size * 0.1, size * 0.4, size * 0.3);
+    },
+    charmander: (ctx, x, y, size) => {
+      ctx.fillStyle = "#F08030";
+      ctx.fillRect(x + size * 0.2, y + size * 0.4, size * 0.6, size * 0.5);
+      ctx.fillStyle = "#F05030";
+      ctx.fillRect(x + size * 0.7, y + size * 0.8, size * 0.1, size * 0.1);
+    },
+    squirtle: (ctx, x, y, size) => {
+      ctx.fillStyle = "#6890F0";
+      ctx.fillRect(x + size * 0.2, y + size * 0.4, size * 0.6, size * 0.5);
+      ctx.fillStyle = "#4060A0";
+      ctx.fillRect(x + size * 0.2, y + size * 0.5, size * 0.6, size * 0.3);
+    }
+  };
+
   // src/infrastructure/canvas_renderer.ts
   var CanvasRenderer = class {
     ctx;
@@ -161,11 +183,17 @@
       this.ctx.strokeRect(2, 114, this.width - 4, 44);
     }
     drawMonsters(player, enemy) {
-      this.ctx.fillStyle = "#555";
-      this.ctx.fillRect(160, 20, 60, 60);
+      const draw = (id, x, y) => {
+        const art = MonsterArt[id];
+        if (art) art(this.ctx, x, y, 60);
+        else {
+          this.ctx.fillStyle = "#999";
+          this.ctx.fillRect(x, y, 60, 60);
+        }
+      };
+      draw(enemy.definitionId, 160, 20);
       this.drawInfoBox(enemy, 20, 20);
-      this.ctx.fillStyle = "#888";
-      this.ctx.fillRect(20, 80, 60, 60);
+      draw(player.definitionId, 20, 80);
       this.drawInfoBox(player, 140, 90);
     }
     drawInfoBox(monster, x, y) {

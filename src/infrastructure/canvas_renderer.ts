@@ -1,4 +1,5 @@
 import { BattleState, MonsterInstance } from '../domain/models';
+import { MonsterArt } from './monster_art';
 
 export class CanvasRenderer {
   private ctx: CanvasRenderingContext2D;
@@ -20,7 +21,6 @@ export class CanvasRenderer {
   }
 
   private drawBackground() {
-    // Simple gradient background for now
     this.ctx.fillStyle = '#78C850'; // Grass field green
     this.ctx.fillRect(0, 0, this.width, this.height);
     
@@ -32,19 +32,25 @@ export class CanvasRenderer {
   }
 
   private drawMonsters(player: MonsterInstance, enemy: MonsterInstance) {
+    const draw = (id: string, x: number, y: number) => {
+      const art = (MonsterArt as any)[id];
+      if (art) art(this.ctx, x, y, 60);
+      else {
+        this.ctx.fillStyle = '#999';
+        this.ctx.fillRect(x, y, 60, 60);
+      }
+    };
+
     // Enemy (top right)
-    this.ctx.fillStyle = '#555';
-    this.ctx.fillRect(160, 20, 60, 60);
+    draw(enemy.definitionId, 160, 20);
     this.drawInfoBox(enemy, 20, 20);
 
     // Player (bottom left)
-    this.ctx.fillStyle = '#888';
-    this.ctx.fillRect(20, 80, 60, 60);
+    draw(player.definitionId, 20, 80);
     this.drawInfoBox(player, 140, 90);
   }
 
   private drawInfoBox(monster: MonsterInstance, x: number, y: number) {
-    // Info bubble background
     this.ctx.fillStyle = '#FFF';
     this.ctx.strokeStyle = '#000';
     this.ctx.beginPath();
@@ -52,7 +58,6 @@ export class CanvasRenderer {
     this.ctx.fill();
     this.ctx.stroke();
 
-    // HP Bar
     const barWidth = 80;
     const hpRatio = monster.currentHp / monster.stats.hp;
     const color = hpRatio > 0.5 ? '#00FF00' : hpRatio > 0.2 ? '#FFFF00' : '#FF0000';
@@ -62,7 +67,6 @@ export class CanvasRenderer {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x + 5, y + 15, barWidth * hpRatio, 6);
 
-    // Text
     this.ctx.fillStyle = '#000';
     this.ctx.font = '8px monospace';
     this.ctx.fillText(monster.name, x + 5, y + 10);
