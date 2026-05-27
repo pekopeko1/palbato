@@ -1,7 +1,7 @@
 [
   {
     "id": "bulbasaur",
-    "name": "Bulbasaur",
+    "name": "フシギダネ",
     "types": ["GRASS", "POISON"],
     "baseStats": {
       "hp": 45,
@@ -20,7 +20,7 @@
   },
   {
     "id": "charmander",
-    "name": "Charmander",
+    "name": "ヒトカゲ",
     "types": ["FIRE"],
     "baseStats": {
       "hp": 39,
@@ -39,7 +39,7 @@
   },
   {
     "id": "squirtle",
-    "name": "Squirtle",
+    "name": "ゼニガメ",
     "types": ["WATER"],
     "baseStats": {
       "hp": 44,

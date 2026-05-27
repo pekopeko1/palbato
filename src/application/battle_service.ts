@@ -1,4 +1,4 @@
-import { BattleState, MonsterInstance, Move } from '../domain/models';
+import { BattleState, MonsterInstance, MoveInstance } from '../domain/models';
 import { calculateDamage } from '../domain/battle_logic';
 
 export class BattleService {
@@ -11,7 +11,7 @@ export class BattleService {
       turnCount: 1,
       isFinished: false,
       winner: null,
-      message: `A wild ${enemy.name} appeared!`
+      message: `やせいの ${enemy.name} が とびだしてきた！`
     };
   }
 
@@ -22,9 +22,8 @@ export class BattleService {
   async executeTurn(playerMoveInstance: MoveInstance) {
     if (this.state.isFinished) return;
 
-    const enemyMoveInstance = this.state.enemyMonster.moves[0]!; // Simple AI
+    const enemyMoveInstance = this.state.enemyMonster.moves[0]!;
 
-    // Decide order
     const playerFirst = this.state.playerMonster.stats.speed >= this.state.enemyMonster.stats.speed;
 
     if (playerFirst) {
@@ -41,27 +40,26 @@ export class BattleService {
 
     if (!this.state.isFinished) {
       this.state.turnCount++;
-      this.state.message = "What will you do?";
+      this.state.message = "どうする？";
     }
   }
 
   private async processMove(attacker: MonsterInstance, defender: MonsterInstance, moveInstance: MoveInstance) {
-    this.state.message = `${attacker.name} used ${moveInstance.move.name}!`;
+    this.state.message = `${attacker.name} の ${moveInstance.move.name}！`;
     
-    // Decrement PP
     moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
     
     const result = calculateDamage(attacker, defender, moveInstance.move);
     defender.currentHp = Math.max(0, defender.currentHp - result.damage);
 
-    if (result.multiplier > 1) this.state.message += " It's super effective!";
-    if (result.multiplier < 1 && result.multiplier > 0) this.state.message += " It's not very effective...";
-    if (result.isCritical) this.state.message += " A critical hit!";
+    if (result.multiplier > 1) this.state.message += " こうかは ばつぐんだ！";
+    if (result.multiplier < 1 && result.multiplier > 0) this.state.message += " こうかは いまひとつ みたいだ…";
+    if (result.isCritical) this.state.message += " きゅうしょに あたった！";
 
     if (defender.currentHp <= 0) {
       this.state.isFinished = true;
       this.state.winner = attacker === this.state.playerMonster ? 'PLAYER' : 'ENEMY';
-      this.state.message = `${defender.name} fainted! ${attacker.name} wins!`;
+      this.state.message = `${defender.name} は たおれた！ ${attacker.name} の かち！`;
     }
   }
 }
