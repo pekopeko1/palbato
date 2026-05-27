@@ -269,4 +269,3 @@
   }
   init().catch(console.error);
 })();
-//# sourceMappingURL=main.js.map
