@@ -1,4 +1,6 @@
 import { MonsterDefinition, Move } from '../domain/models';
+import movesData from '../../public/data/moves.json';
+import monstersData from '../../public/data/monsters.json';
 
 export class AssetLoader {
   private monsters: Map<string, MonsterDefinition> = new Map();
@@ -6,22 +8,8 @@ export class AssetLoader {
   private images: Map<string, HTMLImageElement> = new Map();
 
   async loadAll() {
-    await Promise.all([
-      this.loadMoves('data/moves.json'),
-      this.loadMonsters('data/monsters.json')
-    ]);
-  }
-
-  private async loadMoves(url: string) {
-    const response = await fetch(url);
-    const data: Move[] = await response.json();
-    data.forEach(move => this.moves.set(move.id, move));
-  }
-
-  private async loadMonsters(url: string) {
-    const response = await fetch(url);
-    const data: MonsterDefinition[] = await response.json();
-    data.forEach(monster => this.monsters.set(monster.id, monster));
+    (movesData as Move[]).forEach(move => this.moves.set(move.id, move));
+    (monstersData as MonsterDefinition[]).forEach(monster => this.monsters.set(monster.id, monster));
   }
 
   async loadImage(url: string): Promise<HTMLImageElement> {

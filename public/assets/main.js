@@ -1,25 +1,118 @@
 "use strict";
 (() => {
+  // public/data/moves.json
+  var moves_default = [
+    {
+      id: "tackle",
+      name: "Tackle",
+      type: "NORMAL",
+      category: "PHYSICAL",
+      power: 40,
+      accuracy: 100,
+      pp: 35,
+      description: "A physical attack in which the user charges and slams into the target with its whole body."
+    },
+    {
+      id: "ember",
+      name: "Ember",
+      type: "FIRE",
+      category: "SPECIAL",
+      power: 40,
+      accuracy: 100,
+      pp: 25,
+      description: "The target is attacked with small flames. This may also leave the target with a burn."
+    },
+    {
+      id: "bubble",
+      name: "Bubble",
+      type: "WATER",
+      category: "SPECIAL",
+      power: 40,
+      accuracy: 100,
+      pp: 30,
+      description: "A spray of countless bubbles is jetted at the opposing Pok\xE9mon. This may also lower their Speed stat."
+    },
+    {
+      id: "vine_whip",
+      name: "Vine Whip",
+      type: "GRASS",
+      category: "PHYSICAL",
+      power: 45,
+      accuracy: 100,
+      pp: 25,
+      description: "The target is struck with slender, whip-like vines to inflict damage."
+    }
+  ];
+
+  // public/data/monsters.json
+  var monsters_default = [
+    {
+      id: "bulbasaur",
+      name: "Bulbasaur",
+      types: ["GRASS", "POISON"],
+      baseStats: {
+        hp: 45,
+        attack: 49,
+        defense: 49,
+        spAttack: 65,
+        spDefense: 65,
+        speed: 45
+      },
+      learnset: [
+        { level: 1, moveId: "tackle" },
+        { level: 1, moveId: "vine_whip" }
+      ],
+      frontSprite: "images/bulbasaur_front.png",
+      backSprite: "images/bulbasaur_back.png"
+    },
+    {
+      id: "charmander",
+      name: "Charmander",
+      types: ["FIRE"],
+      baseStats: {
+        hp: 39,
+        attack: 52,
+        defense: 43,
+        spAttack: 60,
+        spDefense: 50,
+        speed: 65
+      },
+      learnset: [
+        { level: 1, moveId: "tackle" },
+        { level: 1, moveId: "ember" }
+      ],
+      frontSprite: "images/charmander_front.png",
+      backSprite: "images/charmander_back.png"
+    },
+    {
+      id: "squirtle",
+      name: "Squirtle",
+      types: ["WATER"],
+      baseStats: {
+        hp: 44,
+        attack: 48,
+        defense: 65,
+        spAttack: 50,
+        spDefense: 64,
+        speed: 43
+      },
+      learnset: [
+        { level: 1, moveId: "tackle" },
+        { level: 1, moveId: "bubble" }
+      ],
+      frontSprite: "images/squirtle_front.png",
+      backSprite: "images/squirtle_back.png"
+    }
+  ];
+
   // src/infrastructure/asset_loader.ts
   var AssetLoader = class {
     monsters = /* @__PURE__ */ new Map();
     moves = /* @__PURE__ */ new Map();
     images = /* @__PURE__ */ new Map();
     async loadAll() {
-      await Promise.all([
-        this.loadMoves("data/moves.json"),
-        this.loadMonsters("data/monsters.json")
-      ]);
-    }
-    async loadMoves(url) {
-      const response = await fetch(url);
-      const data = await response.json();
-      data.forEach((move) => this.moves.set(move.id, move));
-    }
-    async loadMonsters(url) {
-      const response = await fetch(url);
-      const data = await response.json();
-      data.forEach((monster) => this.monsters.set(monster.id, monster));
+      moves_default.forEach((move) => this.moves.set(move.id, move));
+      monsters_default.forEach((monster) => this.monsters.set(monster.id, monster));
     }
     async loadImage(url) {
       if (this.images.has(url)) return this.images.get(url);
