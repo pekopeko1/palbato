@@ -33,23 +33,38 @@ async function init() {
 
   const showSelection = () => {
     const ui = document.getElementById('ui-overlay')!;
-    ui.innerHTML = 'どのポケモンにする？';
+    ui.innerHTML = 'じぶんの ポケモンを えらんで！';
     
     ['bulbasaur', 'charmander', 'squirtle'].forEach(id => {
       const def = loader.getMonster(id)!;
       const btn = document.createElement('div');
       btn.className = 'move-btn';
       btn.innerText = def.name;
-      btn.onclick = () => startBattle(def);
+      btn.onclick = () => showEnemySelection(def);
       ui.appendChild(btn);
     });
   };
 
-  const startBattle = (playerDef: any) => {
-    const playerMonster = createInstance(playerDef, 5);
-    const enemyMonster = createInstance(loader.getMonster('bulbasaur')!, 5); // Simple enemy
+  const showEnemySelection = (playerDef: any) => {
+    const ui = document.getElementById('ui-overlay')!;
+    ui.innerHTML = 'あいての ポケモンを えらんで！';
+    
+    ['bulbasaur', 'charmander', 'squirtle'].forEach(id => {
+      const def = loader.getMonster(id)!;
+      const btn = document.createElement('div');
+      btn.className = 'move-btn';
+      btn.innerText = def.name;
+      btn.onclick = () => startBattle(playerDef, def);
+      ui.appendChild(btn);
+    });
+  };
 
+  const startBattle = (playerDef: any, enemyDef: any) => {
+    const playerMonster = createInstance(playerDef, 5);
+    const enemyMonster = createInstance(enemyDef, 5);
+    
     const battleService = new BattleService(playerMonster, enemyMonster);
+    // ... rest of startBattle function remains mostly same, just pass both ...
 
     const updateUI = () => {
       const state = battleService.getState();

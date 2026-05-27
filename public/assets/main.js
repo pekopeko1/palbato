@@ -379,19 +379,31 @@
     });
     const showSelection = () => {
       const ui = document.getElementById("ui-overlay");
-      ui.innerHTML = "\u3069\u306E\u30DD\u30B1\u30E2\u30F3\u306B\u3059\u308B\uFF1F";
+      ui.innerHTML = "\u3058\u3076\u3093\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
       ["bulbasaur", "charmander", "squirtle"].forEach((id) => {
         const def = loader.getMonster(id);
         const btn = document.createElement("div");
         btn.className = "move-btn";
         btn.innerText = def.name;
-        btn.onclick = () => startBattle(def);
+        btn.onclick = () => showEnemySelection(def);
         ui.appendChild(btn);
       });
     };
-    const startBattle = (playerDef) => {
+    const showEnemySelection = (playerDef) => {
+      const ui = document.getElementById("ui-overlay");
+      ui.innerHTML = "\u3042\u3044\u3066\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
+      ["bulbasaur", "charmander", "squirtle"].forEach((id) => {
+        const def = loader.getMonster(id);
+        const btn = document.createElement("div");
+        btn.className = "move-btn";
+        btn.innerText = def.name;
+        btn.onclick = () => startBattle(playerDef, def);
+        ui.appendChild(btn);
+      });
+    };
+    const startBattle = (playerDef, enemyDef) => {
       const playerMonster = createInstance(playerDef, 5);
-      const enemyMonster = createInstance(loader.getMonster("bulbasaur"), 5);
+      const enemyMonster = createInstance(enemyDef, 5);
       const battleService = new BattleService(playerMonster, enemyMonster);
       const updateUI = () => {
         const state = battleService.getState();
