@@ -19,6 +19,10 @@ export class BattleService {
     return this.state;
   }
 
+  private delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   async executeTurn(playerMoveInstance: MoveInstance) {
     if (this.state.isFinished) return;
 
@@ -28,11 +32,13 @@ export class BattleService {
 
     if (playerFirst) {
       await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
+      await this.delay(1000); // Pause for visibility
       if (!this.state.isFinished) {
         await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
       }
     } else {
       await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
+      await this.delay(1000); // Pause for visibility
       if (!this.state.isFinished) {
         await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
       }

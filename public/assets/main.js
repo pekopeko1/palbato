@@ -285,17 +285,22 @@
     getState() {
       return this.state;
     }
+    delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
     async executeTurn(playerMoveInstance) {
       if (this.state.isFinished) return;
       const enemyMoveInstance = this.state.enemyMonster.moves[0];
       const playerFirst = this.state.playerMonster.stats.speed >= this.state.enemyMonster.stats.speed;
       if (playerFirst) {
         await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
+        await this.delay(1e3);
         if (!this.state.isFinished) {
           await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
         }
       } else {
         await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
+        await this.delay(1e3);
         if (!this.state.isFinished) {
           await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
         }
