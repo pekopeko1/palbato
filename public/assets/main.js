@@ -105,7 +105,7 @@
     },
     {
       id: "shidoss",
-      name: "\u30B7\u30C9\u30B9",
+      name: "\u30B7\u30C9\u30C3\u30B9",
       types: ["NORMAL"],
       baseStats: {
         hp: 60,
@@ -404,7 +404,7 @@
     const showSelection = () => {
       const ui = document.getElementById("ui-overlay");
       ui.innerHTML = "\u3058\u3076\u3093\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
-      ["bulbasaur", "charmander", "squirtle"].forEach((id) => {
+      ["bulbasaur", "charmander", "squirtle", "shidoss"].forEach((id) => {
         const def = loader.getMonster(id);
         const btn = document.createElement("div");
         btn.className = "move-btn";
@@ -416,7 +416,7 @@
     const showEnemySelection = (playerDef) => {
       const ui = document.getElementById("ui-overlay");
       ui.innerHTML = "\u3042\u3044\u3066\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
-      ["bulbasaur", "charmander", "squirtle"].forEach((id) => {
+      ["bulbasaur", "charmander", "squirtle", "shidoss"].forEach((id) => {
         const def = loader.getMonster(id);
         const btn = document.createElement("div");
         btn.className = "move-btn";
