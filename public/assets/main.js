@@ -163,26 +163,29 @@
     drawMonsters(player, enemy) {
       this.ctx.fillStyle = "#555";
       this.ctx.fillRect(160, 20, 60, 60);
-      this.drawHealthBar(enemy, 20, 20);
+      this.drawInfoBox(enemy, 20, 20);
       this.ctx.fillStyle = "#888";
       this.ctx.fillRect(20, 80, 60, 60);
-      this.drawHealthBar(player, 140, 70);
+      this.drawInfoBox(player, 140, 90);
     }
-    drawHealthBar(monster, x, y) {
-      const barWidth = 80;
-      const barHeight = 8;
-      const hpRatio = monster.currentHp / monster.stats.hp;
+    drawInfoBox(monster, x, y) {
       this.ctx.fillStyle = "#FFF";
-      this.ctx.fillRect(x, y, barWidth, barHeight);
       this.ctx.strokeStyle = "#000";
-      this.ctx.strokeRect(x, y, barWidth, barHeight);
+      this.ctx.beginPath();
+      this.ctx.roundRect(x, y, 90, 30, 5);
+      this.ctx.fill();
+      this.ctx.stroke();
+      const barWidth = 80;
+      const hpRatio = monster.currentHp / monster.stats.hp;
       const color = hpRatio > 0.5 ? "#00FF00" : hpRatio > 0.2 ? "#FFFF00" : "#FF0000";
+      this.ctx.fillStyle = "#EEE";
+      this.ctx.fillRect(x + 5, y + 15, barWidth, 6);
       this.ctx.fillStyle = color;
-      this.ctx.fillRect(x + 1, y + 1, (barWidth - 2) * hpRatio, barHeight - 2);
+      this.ctx.fillRect(x + 5, y + 15, barWidth * hpRatio, 6);
       this.ctx.fillStyle = "#000";
       this.ctx.font = "8px monospace";
-      this.ctx.fillText(monster.name, x, y - 5);
-      this.ctx.fillText(`Lv${monster.level}`, x + barWidth - 25, y - 5);
+      this.ctx.fillText(monster.name, x + 5, y + 10);
+      this.ctx.fillText(`Lv${monster.level}`, x + 60, y + 10);
     }
     drawUI(state) {
       this.ctx.fillStyle = "#000";
