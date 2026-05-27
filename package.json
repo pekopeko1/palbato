@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/main.ts --bundle --outfile=public/assets/main.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "start": "npx serve public"
   },
   "keywords": [],
   "author": "",
