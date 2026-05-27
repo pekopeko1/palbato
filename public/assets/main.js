@@ -165,7 +165,7 @@
       this.ctx.fillRect(160, 20, 60, 60);
       this.drawHealthBar(enemy, 20, 20);
       this.ctx.fillStyle = "#888";
-      this.ctx.fillRect(20, 50, 60, 60);
+      this.ctx.fillRect(20, 80, 60, 60);
       this.drawHealthBar(player, 140, 70);
     }
     drawHealthBar(monster, x, y) {

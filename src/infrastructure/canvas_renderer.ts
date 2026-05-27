@@ -39,7 +39,7 @@ export class CanvasRenderer {
 
     // Player (bottom left)
     this.ctx.fillStyle = '#888';
-    this.ctx.fillRect(20, 50, 60, 60);
+    this.ctx.fillRect(20, 80, 60, 60);
     this.drawHealthBar(player, 140, 70);
   }
 
