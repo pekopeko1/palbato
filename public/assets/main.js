@@ -313,11 +313,14 @@
     async processMove(attacker, defender, moveInstance) {
       this.state.message = `${attacker.name} \u306E ${moveInstance.move.name}\uFF01`;
       moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
+      await this.delay(800);
       const result = calculateDamage(attacker, defender, moveInstance.move);
       defender.currentHp = Math.max(0, defender.currentHp - result.damage);
-      if (result.multiplier > 1) this.state.message += " \u3053\u3046\u304B\u306F \u3070\u3064\u3050\u3093\u3060\uFF01";
-      if (result.multiplier < 1 && result.multiplier > 0) this.state.message += " \u3053\u3046\u304B\u306F \u3044\u307E\u3072\u3068\u3064 \u307F\u305F\u3044\u3060\u2026";
-      if (result.isCritical) this.state.message += " \u304D\u3085\u3046\u3057\u3087\u306B \u3042\u305F\u3063\u305F\uFF01";
+      let resultMsg = "";
+      if (result.multiplier > 1) resultMsg += " \u3053\u3046\u304B\u306F \u3070\u3064\u3050\u3093\u3060\uFF01";
+      if (result.multiplier < 1 && result.multiplier > 0) resultMsg += " \u3053\u3046\u304B\u306F \u3044\u307E\u3072\u3068\u3064 \u307F\u305F\u3044\u3060\u2026";
+      if (result.isCritical) resultMsg += " \u304D\u3085\u3046\u3057\u3087\u306B \u3042\u305F\u3063\u305F\uFF01";
+      this.state.message = resultMsg || `${result.damage} \u306E \u30C0\u30E1\u30FC\u30B8\uFF01`;
       if (defender.currentHp <= 0) {
         this.state.isFinished = true;
         this.state.winner = attacker === this.state.playerMonster ? "PLAYER" : "ENEMY";
@@ -391,7 +394,11 @@
         btn.style.flexDirection = "column";
         btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
         btn.onclick = async () => {
+          const ui2 = document.getElementById("ui-overlay");
+          ui2.innerHTML = "\u30D0\u30C8\u30EB\u4E2D...";
           await battleService.executeTurn(moveInstance);
+          renderer.render(battleService.getState());
+          await new Promise((r) => setTimeout(r, 1e3));
           updateUI();
         };
         ui.appendChild(btn);

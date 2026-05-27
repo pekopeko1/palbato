@@ -49,23 +49,31 @@ export class BattleService {
       this.state.message = "どうする？";
     }
   }
+private async processMove(attacker: MonsterInstance, defender: MonsterInstance, moveInstance: MoveInstance) {
+  this.state.message = `${attacker.name} の ${moveInstance.move.name}！`;
+  // 更新を即時反映させるための工夫
+  // (UI描画メソッドを呼び出す必要があるが、現在の設計ではstate更新のみ)
+  // 画面にメッセージを表示する時間を確保するためにawaitを使用する
 
-  private async processMove(attacker: MonsterInstance, defender: MonsterInstance, moveInstance: MoveInstance) {
-    this.state.message = `${attacker.name} の ${moveInstance.move.name}！`;
-    
-    moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
-    
-    const result = calculateDamage(attacker, defender, moveInstance.move);
-    defender.currentHp = Math.max(0, defender.currentHp - result.damage);
+  moveInstance.currentPp = Math.max(0, moveInstance.currentPp - 1);
 
-    if (result.multiplier > 1) this.state.message += " こうかは ばつぐんだ！";
-    if (result.multiplier < 1 && result.multiplier > 0) this.state.message += " こうかは いまひとつ みたいだ…";
-    if (result.isCritical) this.state.message += " きゅうしょに あたった！";
+  await this.delay(800); // 技使用メッセージを表示する時間
 
-    if (defender.currentHp <= 0) {
-      this.state.isFinished = true;
-      this.state.winner = attacker === this.state.playerMonster ? 'PLAYER' : 'ENEMY';
-      this.state.message = `${defender.name} は たおれた！ ${attacker.name} の かち！`;
-    }
+  const result = calculateDamage(attacker, defender, moveInstance.move);
+  defender.currentHp = Math.max(0, defender.currentHp - result.damage);
+
+  let resultMsg = "";
+  if (result.multiplier > 1) resultMsg += " こうかは ばつぐんだ！";
+  if (result.multiplier < 1 && result.multiplier > 0) resultMsg += " こうかは いまひとつ みたいだ…";
+  if (result.isCritical) resultMsg += " きゅうしょに あたった！";
+
+  this.state.message = resultMsg || `${result.damage} の ダメージ！`;
+
+  if (defender.currentHp <= 0) {
+    this.state.isFinished = true;
+    this.state.winner = attacker === this.state.playerMonster ? 'PLAYER' : 'ENEMY';
+    this.state.message = `${defender.name} は たおれた！ ${attacker.name} の かち！`;
   }
+}
+
 }

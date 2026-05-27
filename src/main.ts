@@ -80,7 +80,17 @@ async function init() {
       btn.style.flexDirection = 'column';
       btn.innerHTML = `<span>${moveInstance.move.name}</span><span style="font-size:12px">PP: ${moveInstance.currentPp}/${moveInstance.move.pp}</span>`;
       btn.onclick = async () => {
+        // メニューを消して、バトル進行中のメッセージを表示できるようにする
+        const ui = document.getElementById('ui-overlay')!;
+        ui.innerHTML = 'バトル中...';
+        
         await battleService.executeTurn(moveInstance);
+        
+        // 処理が終わるまで少し待ってからメッセージを更新
+        // ※ 本来はアニメーションループなどで行うが、今回はステート更新を反映
+        renderer.render(battleService.getState());
+        await new Promise(r => setTimeout(r, 1000));
+        
         updateUI();
       };
       ui.appendChild(btn);
