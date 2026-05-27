@@ -11,8 +11,8 @@ export const MonsterArt = {
     ctx.arc(x + size * 0.6, y + size * 0.3, size * 0.2, 0, Math.PI * 2);
     ctx.fill();
     // Eye
-    ctx.fillStyle = '#FFF';
-    ctx.fillRect(x + size * 0.6, y + size * 0.5, size * 0.05, size * 0.05);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x + size * 0.45, y + size * 0.5, size * 0.05, size * 0.05);
   },
   charmander: (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
     // Body (Longer lizard body)
@@ -22,6 +22,9 @@ export const MonsterArt = {
     ctx.beginPath();
     ctx.arc(x + size * 0.5, y + size * 0.3, size * 0.2, 0, Math.PI * 2);
     ctx.fill();
+    // Eye
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x + size * 0.45, y + size * 0.25, size * 0.05, size * 0.05);
     // Tail (Longer)
     ctx.fillStyle = '#F08030';
     ctx.beginPath();
@@ -45,6 +48,6 @@ export const MonsterArt = {
     ctx.fillRect(x + size * 0.3, y + size * 0.4, size * 0.4, size * 0.3);
     // Eye
     ctx.fillStyle = '#000';
-    ctx.fillRect(x + size * 0.6, y + size * 0.5, size * 0.05, size * 0.05);
+    ctx.fillRect(x + size * 0.45, y + size * 0.55, size * 0.05, size * 0.05);
   }
 };

@@ -145,8 +145,8 @@
       ctx.beginPath();
       ctx.arc(x + size * 0.6, y + size * 0.3, size * 0.2, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#FFF";
-      ctx.fillRect(x + size * 0.6, y + size * 0.5, size * 0.05, size * 0.05);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(x + size * 0.45, y + size * 0.5, size * 0.05, size * 0.05);
     },
     charmander: (ctx, x, y, size) => {
       ctx.fillStyle = "#F08030";
@@ -154,6 +154,8 @@
       ctx.beginPath();
       ctx.arc(x + size * 0.5, y + size * 0.3, size * 0.2, 0, Math.PI * 2);
       ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.fillRect(x + size * 0.45, y + size * 0.25, size * 0.05, size * 0.05);
       ctx.fillStyle = "#F08030";
       ctx.beginPath();
       ctx.moveTo(x + size * 0.2, y + size * 0.6);
@@ -172,7 +174,7 @@
       ctx.fillStyle = "#4060A0";
       ctx.fillRect(x + size * 0.3, y + size * 0.4, size * 0.4, size * 0.3);
       ctx.fillStyle = "#000";
-      ctx.fillRect(x + size * 0.6, y + size * 0.5, size * 0.05, size * 0.05);
+      ctx.fillRect(x + size * 0.45, y + size * 0.55, size * 0.05, size * 0.05);
     }
   };
 
