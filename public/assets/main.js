@@ -102,6 +102,24 @@
       ],
       frontSprite: "images/squirtle_front.png",
       backSprite: "images/squirtle_back.png"
+    },
+    {
+      id: "shidoss",
+      name: "\u30B7\u30C9\u30B9",
+      types: ["NORMAL"],
+      baseStats: {
+        hp: 60,
+        attack: 60,
+        defense: 60,
+        spAttack: 60,
+        spDefense: 60,
+        speed: 60
+      },
+      learnset: [
+        { level: 1, moveId: "tackle" }
+      ],
+      frontSprite: "images/shidoss_front.png",
+      backSprite: "images/shidoss_back.png"
     }
   ];
 
