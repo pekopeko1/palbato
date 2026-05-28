@@ -284,7 +284,9 @@
         const url = isPlayer ? def.backSprite : def.frontSprite;
         const img = this.loader.getImage(url);
         if (img) {
+          this.ctx.imageSmoothingEnabled = true;
           this.ctx.drawImage(img, x, y, 60, 60);
+          this.ctx.imageSmoothingEnabled = false;
         } else {
           const art = MonsterArt[def.id];
           if (art) art(this.ctx, x, y, 60);

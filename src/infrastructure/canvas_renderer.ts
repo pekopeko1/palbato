@@ -56,8 +56,11 @@ export class CanvasRenderer {
       const img = this.loader.getImage(url);
       
       if (img) {
-        // Draw actual image (respects transparency)
+        // 高解像度画像を縮小する際、スムージングが無効だとエッジに白いノイズ（半透明部分の誤認）が出やすいため、
+        // モンスターの描画時のみスムージングを有効にします。
+        this.ctx.imageSmoothingEnabled = true;
         this.ctx.drawImage(img, x, y, 60, 60);
+        this.ctx.imageSmoothingEnabled = false; // 他の描画（ドット絵スタイル）のために戻す
       } else {
         // Fallback procedural art
         const art = (MonsterArt as any)[def.id];
