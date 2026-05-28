@@ -2,7 +2,7 @@ export type ElementType =
   | 'NORMAL' | 'FIRE' | 'WATER' | 'GRASS' | 'ELECTRIC' 
   | 'ICE' | 'FIGHTING' | 'POISON' | 'GROUND' | 'FLYING' 
   | 'PSYCHIC' | 'BUG' | 'ROCK' | 'GHOST' | 'DRAGON' 
-  | 'STEEL' | 'DARK';
+  | 'STEEL' | 'DARK' | 'FAIRY';
 
 export type StatusEffect = 'NONE' | 'POISON' | 'PARALYSIS' | 'SLEEP' | 'BURN' | 'FROZEN';
 

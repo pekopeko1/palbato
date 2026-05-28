@@ -38,5 +38,45 @@
     "accuracy": 100,
     "pp": 25,
     "description": "ほそい　つるを　ムチのように　しならせて　あいてを　こうげきする。"
+  },
+  {
+    "id": "dragon_rush",
+    "name": "ドラゴンダイブ",
+    "type": "DRAGON",
+    "category": "PHYSICAL",
+    "power": 100,
+    "accuracy": 75,
+    "pp": 10,
+    "description": "ものすごい　いあつかんを　はなちながら　あいてに　とっしんする。あいてを　ひるませることも　ある。"
+  },
+  {
+    "id": "heal_block",
+    "name": "かいふくふうじ",
+    "type": "PSYCHIC",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 15,
+    "description": "５ターンの　あいだ　あいての　じぶんを　かいふくさせる　わざを　ふうじる。"
+  },
+  {
+    "id": "dragon_pulse",
+    "name": "りゅうのはどう",
+    "type": "DRAGON",
+    "category": "SPECIAL",
+    "power": 85,
+    "accuracy": 100,
+    "pp": 10,
+    "description": "くちから　しょうげきはを　はきだして　あいてを　こうげきする。"
+  },
+  {
+    "id": "moonblast",
+    "name": "ムーンフォース",
+    "type": "FAIRY",
+    "category": "SPECIAL",
+    "power": 95,
+    "accuracy": 100,
+    "pp": 15,
+    "description": "つきの　ちからを　かりて　あいてを　こうげきする。あいての　とくこうを　さげることが　ある。"
   }
 ]

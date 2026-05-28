@@ -59,7 +59,7 @@
   {
     "id": "shidoss",
     "name": "シドッス",
-    "types": ["NORMAL"],
+    "types": ["FAIRY"],
     "baseStats": {
       "hp": 60,
       "attack": 60,
@@ -69,7 +69,10 @@
       "speed": 60
     },
     "learnset": [
-      { "level": 1, "moveId": "tackle" }
+      { "level": 1, "moveId": "dragon_rush" },
+      { "level": 1, "moveId": "heal_block" },
+      { "level": 1, "moveId": "dragon_pulse" },
+      { "level": 1, "moveId": "moonblast" }
     ],
     "frontSprite": "images/shidoss_front.png",
     "backSprite": "images/shidoss_back.png"

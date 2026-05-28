@@ -41,6 +41,46 @@
       accuracy: 100,
       pp: 25,
       description: "\u307B\u305D\u3044\u3000\u3064\u308B\u3092\u3000\u30E0\u30C1\u306E\u3088\u3046\u306B\u3000\u3057\u306A\u3089\u305B\u3066\u3000\u3042\u3044\u3066\u3092\u3000\u3053\u3046\u3052\u304D\u3059\u308B\u3002"
+    },
+    {
+      id: "dragon_rush",
+      name: "\u30C9\u30E9\u30B4\u30F3\u30C0\u30A4\u30D6",
+      type: "DRAGON",
+      category: "PHYSICAL",
+      power: 100,
+      accuracy: 75,
+      pp: 10,
+      description: "\u3082\u306E\u3059\u3054\u3044\u3000\u3044\u3042\u3064\u304B\u3093\u3092\u3000\u306F\u306A\u3061\u306A\u304C\u3089\u3000\u3042\u3044\u3066\u306B\u3000\u3068\u3063\u3057\u3093\u3059\u308B\u3002\u3042\u3044\u3066\u3092\u3000\u3072\u308B\u307E\u305B\u308B\u3053\u3068\u3082\u3000\u3042\u308B\u3002"
+    },
+    {
+      id: "heal_block",
+      name: "\u304B\u3044\u3075\u304F\u3075\u3046\u3058",
+      type: "PSYCHIC",
+      category: "STATUS",
+      power: 0,
+      accuracy: 100,
+      pp: 15,
+      description: "\uFF15\u30BF\u30FC\u30F3\u306E\u3000\u3042\u3044\u3060\u3000\u3042\u3044\u3066\u306E\u3000\u3058\u3076\u3093\u3092\u3000\u304B\u3044\u3075\u304F\u3055\u305B\u308B\u3000\u308F\u3056\u3092\u3000\u3075\u3046\u3058\u308B\u3002"
+    },
+    {
+      id: "dragon_pulse",
+      name: "\u308A\u3085\u3046\u306E\u306F\u3069\u3046",
+      type: "DRAGON",
+      category: "SPECIAL",
+      power: 85,
+      accuracy: 100,
+      pp: 10,
+      description: "\u304F\u3061\u304B\u3089\u3000\u3057\u3087\u3046\u3052\u304D\u306F\u3092\u3000\u306F\u304D\u3060\u3057\u3066\u3000\u3042\u3044\u3066\u3092\u3000\u3053\u3046\u3052\u304D\u3059\u308B\u3002"
+    },
+    {
+      id: "moonblast",
+      name: "\u30E0\u30FC\u30F3\u30D5\u30A9\u30FC\u30B9",
+      type: "FAIRY",
+      category: "SPECIAL",
+      power: 95,
+      accuracy: 100,
+      pp: 15,
+      description: "\u3064\u304D\u306E\u3000\u3061\u304B\u3089\u3092\u3000\u304B\u308A\u3066\u3000\u3042\u3044\u3066\u3092\u3000\u3053\u3046\u3052\u304D\u3059\u308B\u3002\u3042\u3044\u3066\u306E\u3000\u3068\u304F\u3053\u3046\u3092\u3000\u3055\u3052\u308B\u3053\u3068\u304C\u3000\u3042\u308B\u3002"
     }
   ];
 
@@ -106,7 +146,7 @@
     {
       id: "shidoss",
       name: "\u30B7\u30C9\u30C3\u30B9",
-      types: ["NORMAL"],
+      types: ["FAIRY"],
       baseStats: {
         hp: 60,
         attack: 60,
@@ -116,7 +156,10 @@
         speed: 60
       },
       learnset: [
-        { level: 1, moveId: "tackle" }
+        { level: 1, moveId: "dragon_rush" },
+        { level: 1, moveId: "heal_block" },
+        { level: 1, moveId: "dragon_pulse" },
+        { level: 1, moveId: "moonblast" }
       ],
       frontSprite: "images/shidoss_front.png",
       backSprite: "images/shidoss_back.png"
@@ -277,22 +320,23 @@
   // src/domain/battle_logic.ts
   var TypeEffectiveness = {
     NORMAL: { ROCK: 0.5, GHOST: 0, STEEL: 0.5 },
-    FIRE: { FIRE: 0.5, WATER: 0.5, GRASS: 2, ICE: 2, BUG: 2, ROCK: 0.5, DRAGON: 0.5, STEEL: 2 },
+    FIRE: { FIRE: 0.5, WATER: 0.5, GRASS: 2, ICE: 2, BUG: 2, ROCK: 0.5, DRAGON: 0.5, STEEL: 2, FAIRY: 0.5 },
     WATER: { FIRE: 2, WATER: 0.5, GRASS: 0.5, GROUND: 2, ROCK: 2, DRAGON: 0.5 },
     GRASS: { FIRE: 0.5, WATER: 2, GRASS: 0.5, POISON: 0.5, GROUND: 2, FLYING: 0.5, BUG: 0.5, ROCK: 2, DRAGON: 0.5, STEEL: 0.5 },
     ELECTRIC: { WATER: 2, ELECTRIC: 0.5, GRASS: 0.5, GROUND: 0, FLYING: 2, DRAGON: 0.5 },
     ICE: { FIRE: 0.5, WATER: 0.5, GRASS: 2, ICE: 0.5, GROUND: 2, FLYING: 2, DRAGON: 2, STEEL: 0.5 },
-    FIGHTING: { NORMAL: 2, ICE: 2, POISON: 0.5, FLYING: 0.5, PSYCHIC: 0.5, BUG: 0.5, ROCK: 2, GHOST: 0, DARK: 2, STEEL: 2 },
-    POISON: { GRASS: 2, POISON: 0.5, GROUND: 0.5, ROCK: 0.5, GHOST: 0.5, STEEL: 0 },
+    FIGHTING: { NORMAL: 2, ICE: 2, POISON: 0.5, FLYING: 0.5, PSYCHIC: 0.5, BUG: 0.5, ROCK: 2, GHOST: 0, DARK: 2, STEEL: 2, FAIRY: 0.5 },
+    POISON: { GRASS: 2, POISON: 0.5, GROUND: 0.5, ROCK: 0.5, GHOST: 0.5, STEEL: 0, FAIRY: 2 },
     GROUND: { FIRE: 2, ELECTRIC: 2, GRASS: 0.5, POISON: 2, BUG: 0.5, ROCK: 2, STEEL: 2 },
     FLYING: { ELECTRIC: 0.5, GRASS: 2, FIGHTING: 2, BUG: 2, ROCK: 0.5, STEEL: 0.5 },
     PSYCHIC: { FIGHTING: 2, POISON: 2, PSYCHIC: 0.5, DARK: 0, STEEL: 0.5 },
-    BUG: { FIRE: 0.5, GRASS: 2, FIGHTING: 0.5, POISON: 0.5, FLYING: 0.5, PSYCHIC: 2, GHOST: 0.5, DARK: 2, STEEL: 0.5 },
+    BUG: { FIRE: 0.5, GRASS: 2, FIGHTING: 0.5, POISON: 0.5, FLYING: 0.5, PSYCHIC: 2, GHOST: 0.5, DARK: 2, STEEL: 0.5, FAIRY: 0.5 },
     ROCK: { FIRE: 2, ICE: 2, FIGHTING: 0.5, GROUND: 0.5, FLYING: 2, BUG: 2, STEEL: 0.5 },
     GHOST: { NORMAL: 0, PSYCHIC: 2, GHOST: 2, DARK: 0.5 },
-    DRAGON: { DRAGON: 2, STEEL: 0.5 },
-    STEEL: { FIRE: 0.5, WATER: 0.5, ELECTRIC: 0.5, ICE: 2, ROCK: 2, STEEL: 0.5 },
-    DARK: { FIGHTING: 0.5, PSYCHIC: 2, GHOST: 2, DARK: 0.5 }
+    DRAGON: { DRAGON: 2, STEEL: 0.5, FAIRY: 0 },
+    STEEL: { FIRE: 0.5, WATER: 0.5, ELECTRIC: 0.5, ICE: 2, ROCK: 2, STEEL: 0.5, FAIRY: 2 },
+    DARK: { FIGHTING: 0.5, PSYCHIC: 2, GHOST: 2, DARK: 0.5, FAIRY: 0.5 },
+    FAIRY: { FIRE: 0.5, FIGHTING: 2, POISON: 0.5, DRAGON: 2, STEEL: 0.5, DARK: 2 }
   };
   function getEffectiveness(moveType, targetTypes) {
     let multiplier = 1;
