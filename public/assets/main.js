@@ -258,13 +258,21 @@
       this.ctx.imageSmoothingEnabled = false;
     }
     render(state) {
+      this.ctx.clearRect(0, 0, this.width, this.height);
       this.drawBackground();
       this.drawMonsters(state.playerMonster, state.enemyMonster);
       this.drawUI(state);
     }
     drawBackground() {
       this.ctx.fillStyle = "#78C850";
-      this.ctx.fillRect(0, 0, this.width, this.height);
+      this.ctx.fillRect(0, 0, this.width, 112);
+      this.ctx.fillStyle = "#68A040";
+      this.ctx.beginPath();
+      this.ctx.ellipse(180, 70, 40, 15, 0, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.beginPath();
+      this.ctx.ellipse(60, 130, 60, 20, 0, 0, Math.PI * 2);
+      this.ctx.fill();
       this.ctx.fillStyle = "#E0E0E0";
       this.ctx.fillRect(0, 112, this.width, 48);
       this.ctx.strokeStyle = "#000";
@@ -286,10 +294,10 @@
           }
         }
       };
-      draw(this.loader.getMonster(enemy.definitionId), 160, 20, false);
-      this.drawInfoBox(enemy, 20, 20);
-      draw(this.loader.getMonster(player.definitionId), 20, 80, true);
-      this.drawInfoBox(player, 140, 90);
+      draw(this.loader.getMonster(enemy.definitionId), 150, 15, false);
+      this.drawInfoBox(enemy, 15, 15);
+      draw(this.loader.getMonster(player.definitionId), 30, 65, true);
+      this.drawInfoBox(player, 135, 75);
     }
     drawInfoBox(monster, x, y) {
       this.ctx.fillStyle = "#FFF";
