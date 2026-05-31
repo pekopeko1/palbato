@@ -173,6 +173,24 @@
       ],
       frontSprite: "images/shidoss_front.png",
       backSprite: "images/shidoss_back.png"
+    },
+    {
+      id: "aruchu",
+      name: "\u30A2\u30EB\u30C1\u30E5\u30A6",
+      types: ["NORMAL"],
+      baseStats: {
+        hp: 44,
+        attack: 48,
+        defense: 65,
+        spAttack: 50,
+        spDefense: 64,
+        speed: 43
+      },
+      learnset: [
+        { level: 1, moveId: "nihil_light" }
+      ],
+      frontSprite: "images/aruchu_front.png",
+      backSprite: "images/aruchu_back.png"
     }
   ];
 
@@ -251,6 +269,24 @@
       ctx.fillRect(x + size * 0.3, y + size * 0.4, size * 0.4, size * 0.3);
       ctx.fillStyle = "#000";
       ctx.fillRect(x + size * 0.45, y + size * 0.55, size * 0.05, size * 0.05);
+    },
+    aruchu: (ctx, x, y, size) => {
+      ctx.fillStyle = "#FFD700";
+      ctx.beginPath();
+      ctx.arc(x + size * 0.5, y + size * 0.6, size * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x + size * 0.3, y + size * 0.3);
+      ctx.lineTo(x + size * 0.2, y + size * 0.1);
+      ctx.lineTo(x + size * 0.4, y + size * 0.3);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x + size * 0.7, y + size * 0.3);
+      ctx.lineTo(x + size * 0.8, y + size * 0.1);
+      ctx.lineTo(x + size * 0.6, y + size * 0.3);
+      ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.fillRect(x + size * 0.45, y + size * 0.5, size * 0.05, size * 0.05);
     }
   };
 
@@ -480,7 +516,7 @@
     const showSelection = () => {
       const ui = document.getElementById("ui-overlay");
       ui.innerHTML = "\u3058\u3076\u3093\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
-      ["bulbasaur", "charmander", "squirtle", "shidoss"].forEach((id) => {
+      ["bulbasaur", "charmander", "squirtle", "shidoss", "aruchu"].forEach((id) => {
         const def = loader.getMonster(id);
         const btn = document.createElement("div");
         btn.className = "move-btn";
@@ -492,7 +528,7 @@
     const showEnemySelection = (playerDef) => {
       const ui = document.getElementById("ui-overlay");
       ui.innerHTML = "\u3042\u3044\u3066\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
-      ["bulbasaur", "charmander", "squirtle", "shidoss"].forEach((id) => {
+      ["bulbasaur", "charmander", "squirtle", "shidoss", "aruchu"].forEach((id) => {
         const def = loader.getMonster(id);
         const btn = document.createElement("div");
         btn.className = "move-btn";

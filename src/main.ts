@@ -35,7 +35,7 @@ async function init() {
     const ui = document.getElementById('ui-overlay')!;
     ui.innerHTML = 'じぶんの ポケモンを えらんで！';
     
-    ['bulbasaur', 'charmander', 'squirtle', 'shidoss'].forEach(id => {
+    ['bulbasaur', 'charmander', 'squirtle', 'shidoss', 'aruchu'].forEach(id => {
       const def = loader.getMonster(id)!;
       const btn = document.createElement('div');
       btn.className = 'move-btn';
@@ -49,7 +49,7 @@ async function init() {
     const ui = document.getElementById('ui-overlay')!;
     ui.innerHTML = 'あいての ポケモンを えらんで！';
     
-    ['bulbasaur', 'charmander', 'squirtle', 'shidoss'].forEach(id => {
+    ['bulbasaur', 'charmander', 'squirtle', 'shidoss', 'aruchu'].forEach(id => {
       const def = loader.getMonster(id)!;
       const btn = document.createElement('div');
       btn.className = 'move-btn';

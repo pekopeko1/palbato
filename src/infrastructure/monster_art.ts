@@ -49,5 +49,26 @@ export const MonsterArt = {
     // Eye
     ctx.fillStyle = '#000';
     ctx.fillRect(x + size * 0.45, y + size * 0.55, size * 0.05, size * 0.05);
+  },
+  aruchu: (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
+    // Body (Yellow-ish round body)
+    ctx.fillStyle = '#FFD700';
+    ctx.beginPath();
+    ctx.arc(x + size * 0.5, y + size * 0.6, size * 0.35, 0, Math.PI * 2);
+    ctx.fill();
+    // Ears
+    ctx.beginPath();
+    ctx.moveTo(x + size * 0.3, y + size * 0.3);
+    ctx.lineTo(x + size * 0.2, y + size * 0.1);
+    ctx.lineTo(x + size * 0.4, y + size * 0.3);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + size * 0.7, y + size * 0.3);
+    ctx.lineTo(x + size * 0.8, y + size * 0.1);
+    ctx.lineTo(x + size * 0.6, y + size * 0.3);
+    ctx.fill();
+    // Eye
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x + size * 0.45, y + size * 0.5, size * 0.05, size * 0.05);
   }
 };

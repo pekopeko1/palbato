@@ -76,5 +76,23 @@
     ],
     "frontSprite": "images/shidoss_front.png",
     "backSprite": "images/shidoss_back.png"
+  },
+  {
+    "id": "aruchu",
+    "name": "アルチュウ",
+    "types": ["NORMAL"],
+    "baseStats": {
+      "hp": 44,
+      "attack": 48,
+      "defense": 65,
+      "spAttack": 50,
+      "spDefense": 64,
+      "speed": 43
+    },
+    "learnset": [
+      { "level": 1, "moveId": "nihil_light" }
+    ],
+    "frontSprite": "images/aruchu_front.png",
+    "backSprite": "images/aruchu_back.png"
   }
 ]
