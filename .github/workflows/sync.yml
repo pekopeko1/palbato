@@ -1,0 +1,50 @@
+name: Sync Public Files to github.io pages
+
+on:
+  push:
+    branches:
+      - main # 対象にするrepAのブランチ
+    paths:
+      - 'public/**'       # 特定のディレクトリ配下すべてを指定したい場合
+
+jobs:
+  copy-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. repAのソースコードをチェックアウト
+    - name: Checkout palbato
+      uses: actions/checkout@v4
+
+    # 2. repBのソースコードを別フォルダ（repB）にチェックアウト
+    - name: Checkout pekopeko1.github.io
+      uses: actions/checkout@v4
+      with:
+        repository: 'pekopeko1/pekopeko1.github.io'
+        token: ${{ secrets.API_TOKEN_GITHUBIO }}
+        path: 'repB'
+
+    # 3. 特定のファイルをpekopeko1.github.ioのフォルダへコピー
+    - name: Copy files
+      run: |
+        # コピー先リポジトリ内にディレクトリを作成
+        mkdir -p repB/palbato/public
+        
+        # ファイルをコピー
+        cp -rp public/* repB/palbato/public/
+
+    # 4. pekopeko1.github.io側で変更をコミットしてpush
+    - name: Commit and Push to pekopeko1.github.io
+      run: |
+        cd repB
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        # 変更がある場合のみコミットしてpush
+        if [ -n "$(git status --porcelain)" ]; then
+          git add .
+          git commit -m "Automated sync from palbato [skip ci]"
+          git push origin main
+        else
+          echo "No changes to commit"
+        fi
