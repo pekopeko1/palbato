@@ -188,12 +188,12 @@
       name: "\u30B7\u30C9\u30C3\u30B9",
       types: ["FAIRY"],
       baseStats: {
-        hp: 60,
-        attack: 60,
-        defense: 60,
-        spAttack: 60,
-        spDefense: 60,
-        speed: 60
+        hp: 12,
+        attack: 56,
+        defense: 34,
+        spAttack: 90,
+        spDefense: 934,
+        speed: 65
       },
       learnset: [
         { level: 1, moveId: "dragon_rush" },
@@ -527,7 +527,7 @@
     const canvas = document.getElementById("game-canvas");
     const renderer = new CanvasRenderer(canvas, loader);
     const createInstance = (def, level) => {
-      const finalLevel = def.id === "aruchu" ? 80 : level;
+      const finalLevel = def.id === "aruchu" || def.id === "shidoss" ? 80 : level;
       const calcHP = (base, lvl) => Math.floor(base * 2 * lvl / 100) + lvl + 10;
       const calcOther = (base, lvl) => Math.floor(base * 2 * lvl / 100) + 5;
       const stats = {
