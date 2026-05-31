@@ -10,26 +10,29 @@ async function init() {
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   const renderer = new CanvasRenderer(canvas, loader);
 
-  const createInstance = (def: any, level: number): MonsterInstance => ({
-    definitionId: def.id,
-    name: def.name,
-    types: def.types,
-    level: level,
-    currentHp: def.baseStats.hp + level * 2,
-    stats: {
-      hp: def.baseStats.hp + level * 2,
-      attack: def.baseStats.attack + level,
-      defense: def.baseStats.defense + level,
-      spAttack: def.baseStats.spAttack + level,
-      spDefense: def.baseStats.spDefense + level,
-      speed: def.baseStats.speed + level,
-    },
-    moves: def.learnset.map((l: any) => {
-      const move = loader.getMove(l.moveId);
-      return move ? { move, currentPp: move.pp } : null;
-    }).filter((m: any) => m !== null),
-    status: 'NONE'
-  });
+  const createInstance = (def: any, level: number): MonsterInstance => {
+    const finalLevel = def.id === 'aruchu' ? 80 : level;
+    return {
+      definitionId: def.id,
+      name: def.name,
+      types: def.types,
+      level: finalLevel,
+      currentHp: def.baseStats.hp,
+      stats: {
+        hp: def.baseStats.hp,
+        attack: def.baseStats.attack,
+        defense: def.baseStats.defense,
+        spAttack: def.baseStats.spAttack,
+        spDefense: def.baseStats.spDefense,
+        speed: def.baseStats.speed,
+      },
+      moves: def.learnset.map((l: any) => {
+        const move = loader.getMove(l.moveId);
+        return move ? { move, currentPp: move.pp } : null;
+      }).filter((m: any) => m !== null),
+      status: 'NONE'
+    };
+  };
 
   const showSelection = () => {
     const ui = document.getElementById('ui-overlay')!;

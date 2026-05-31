@@ -209,12 +209,12 @@
       name: "\u30A2\u30EB\u30C1\u30E5\u30A6",
       types: ["NORMAL"],
       baseStats: {
-        hp: 44,
-        attack: 48,
-        defense: 65,
-        spAttack: 50,
-        spDefense: 64,
-        speed: 43
+        hp: 120,
+        attack: 20,
+        defense: 170,
+        spAttack: 80,
+        spDefense: 200,
+        speed: 10
       },
       learnset: [
         { level: 1, moveId: "nihil_light" },
@@ -526,26 +526,29 @@
     await loader.loadAll();
     const canvas = document.getElementById("game-canvas");
     const renderer = new CanvasRenderer(canvas, loader);
-    const createInstance = (def, level) => ({
-      definitionId: def.id,
-      name: def.name,
-      types: def.types,
-      level,
-      currentHp: def.baseStats.hp + level * 2,
-      stats: {
-        hp: def.baseStats.hp + level * 2,
-        attack: def.baseStats.attack + level,
-        defense: def.baseStats.defense + level,
-        spAttack: def.baseStats.spAttack + level,
-        spDefense: def.baseStats.spDefense + level,
-        speed: def.baseStats.speed + level
-      },
-      moves: def.learnset.map((l) => {
-        const move = loader.getMove(l.moveId);
-        return move ? { move, currentPp: move.pp } : null;
-      }).filter((m) => m !== null),
-      status: "NONE"
-    });
+    const createInstance = (def, level) => {
+      const finalLevel = def.id === "aruchu" ? 80 : level;
+      return {
+        definitionId: def.id,
+        name: def.name,
+        types: def.types,
+        level: finalLevel,
+        currentHp: def.baseStats.hp,
+        stats: {
+          hp: def.baseStats.hp,
+          attack: def.baseStats.attack,
+          defense: def.baseStats.defense,
+          spAttack: def.baseStats.spAttack,
+          spDefense: def.baseStats.spDefense,
+          speed: def.baseStats.speed
+        },
+        moves: def.learnset.map((l) => {
+          const move = loader.getMove(l.moveId);
+          return move ? { move, currentPp: move.pp } : null;
+        }).filter((m) => m !== null),
+        status: "NONE"
+      };
+    };
     const showSelection = () => {
       const ui = document.getElementById("ui-overlay");
       ui.innerHTML = "\u3058\u3076\u3093\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
