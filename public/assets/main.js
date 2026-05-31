@@ -217,7 +217,10 @@
         speed: 43
       },
       learnset: [
-        { level: 1, moveId: "nihil_light" }
+        { level: 1, moveId: "nihil_light" },
+        { level: 1, moveId: "rest" },
+        { level: 1, moveId: "amnesia" },
+        { level: 1, moveId: "swords_dance" }
       ],
       frontSprite: "images/aruchu_front.png",
       backSprite: "images/aruchu_back.png"
