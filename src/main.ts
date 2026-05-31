@@ -139,3 +139,7 @@ async function init() {
 }
 
 init().catch(console.error);
+
+window.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM fully loaded and parsed');
+});
