@@ -78,5 +78,15 @@
     "accuracy": 100,
     "pp": 15,
     "description": "つきの　ちからを　かりて　あいてを　こうげきする。あいての　とくこうを　さげることが　ある。"
+  },
+  {
+    "id": "nihil_light",
+    "name": "無に帰す光",
+    "type": "FAIRY",
+    "category": "SPECIAL",
+    "power": 150,
+    "accuracy": 100,
+    "pp": 5,
+    "description": "すべてを　むに　かえす　まばゆい　ひかりで　あいてを　こうげきする。"
   }
 ]
