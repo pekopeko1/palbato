@@ -12,20 +12,27 @@ async function init() {
 
   const createInstance = (def: any, level: number): MonsterInstance => {
     const finalLevel = def.id === 'aruchu' ? 80 : level;
+    
+    // Pokemon-like stat calculation
+    const calcHP = (base: number, lvl: number) => Math.floor((base * 2 * lvl) / 100) + lvl + 10;
+    const calcOther = (base: number, lvl: number) => Math.floor((base * 2 * lvl) / 100) + 5;
+
+    const stats = {
+      hp: calcHP(def.baseStats.hp, finalLevel),
+      attack: calcOther(def.baseStats.attack, finalLevel),
+      defense: calcOther(def.baseStats.defense, finalLevel),
+      spAttack: calcOther(def.baseStats.spAttack, finalLevel),
+      spDefense: calcOther(def.baseStats.spDefense, finalLevel),
+      speed: calcOther(def.baseStats.speed, finalLevel),
+    };
+
     return {
       definitionId: def.id,
       name: def.name,
       types: def.types,
       level: finalLevel,
-      currentHp: def.baseStats.hp,
-      stats: {
-        hp: def.baseStats.hp,
-        attack: def.baseStats.attack,
-        defense: def.baseStats.defense,
-        spAttack: def.baseStats.spAttack,
-        spDefense: def.baseStats.spDefense,
-        speed: def.baseStats.speed,
-      },
+      currentHp: stats.hp,
+      stats: stats,
       moves: def.learnset.map((l: any) => {
         const move = loader.getMove(l.moveId);
         return move ? { move, currentPp: move.pp } : null;

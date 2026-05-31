@@ -209,12 +209,12 @@
       name: "\u30A2\u30EB\u30C1\u30E5\u30A6",
       types: ["NORMAL"],
       baseStats: {
-        hp: 120,
-        attack: 20,
-        defense: 170,
-        spAttack: 80,
-        spDefense: 200,
-        speed: 10
+        hp: 19,
+        attack: 10,
+        defense: 103,
+        spAttack: 47,
+        spDefense: 122,
+        speed: 3
       },
       learnset: [
         { level: 1, moveId: "nihil_light" },
@@ -528,20 +528,23 @@
     const renderer = new CanvasRenderer(canvas, loader);
     const createInstance = (def, level) => {
       const finalLevel = def.id === "aruchu" ? 80 : level;
+      const calcHP = (base, lvl) => Math.floor(base * 2 * lvl / 100) + lvl + 10;
+      const calcOther = (base, lvl) => Math.floor(base * 2 * lvl / 100) + 5;
+      const stats = {
+        hp: calcHP(def.baseStats.hp, finalLevel),
+        attack: calcOther(def.baseStats.attack, finalLevel),
+        defense: calcOther(def.baseStats.defense, finalLevel),
+        spAttack: calcOther(def.baseStats.spAttack, finalLevel),
+        spDefense: calcOther(def.baseStats.spDefense, finalLevel),
+        speed: calcOther(def.baseStats.speed, finalLevel)
+      };
       return {
         definitionId: def.id,
         name: def.name,
         types: def.types,
         level: finalLevel,
-        currentHp: def.baseStats.hp,
-        stats: {
-          hp: def.baseStats.hp,
-          attack: def.baseStats.attack,
-          defense: def.baseStats.defense,
-          spAttack: def.baseStats.spAttack,
-          spDefense: def.baseStats.spDefense,
-          speed: def.baseStats.speed
-        },
+        currentHp: stats.hp,
+        stats,
         moves: def.learnset.map((l) => {
           const move = loader.getMove(l.moveId);
           return move ? { move, currentPp: move.pp } : null;

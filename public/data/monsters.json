@@ -82,12 +82,12 @@
     "name": "アルチュウ",
     "types": ["NORMAL"],
     "baseStats": {
-      "hp": 120,
-      "attack": 20,
-      "defense": 170,
-      "spAttack": 80,
-      "spDefense": 200,
-      "speed": 10
+      "hp": 19,
+      "attack": 10,
+      "defense": 103,
+      "spAttack": 47,
+      "spDefense": 122,
+      "speed": 3
     },
     "learnset": [
       { "level": 1, "moveId": "nihil_light" },
