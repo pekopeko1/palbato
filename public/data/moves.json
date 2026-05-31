@@ -88,5 +88,35 @@
     "accuracy": 100,
     "pp": 5,
     "description": "すべてを　むに　きす　まばゆい　ひかりで　あいてを　こうげきする。"
+  },
+  {
+    "id": "rest",
+    "name": "ねむる",
+    "type": "PSYCHIC",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 10,
+    "description": "２ターンの　あいだ　ねむって　じぶんの　ＨＰと　じょうたいじょうを　すべて　かいふくする。"
+  },
+  {
+    "id": "amnesia",
+    "name": "どわすれ",
+    "type": "PSYCHIC",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 20,
+    "description": "いっしゅん　なにかを　わすれることで　じぶんの　とくぼうを　ぐーんと　あげる。"
+  },
+  {
+    "id": "swords_dance",
+    "name": "つるぎのまい",
+    "type": "NORMAL",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 20,
+    "description": "たたかいの　きもちを　たかめる　おどりを　おどって　じぶんの　こうげきを　ぐーんと　あげる。"
   }
 ]
