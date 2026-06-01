@@ -9,6 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "outFile": "./public/assets/main.js",
     "lib": ["DOM", "ESNext"]
   },
   "include": ["src/**/*"],
