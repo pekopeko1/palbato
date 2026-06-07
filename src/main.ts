@@ -13,7 +13,7 @@ async function init() {
   const createInstance = (def: any, level: number): MonsterInstance => {
     const finalLevel = (def.id === 'aruchu' || def.id === 'shidoss') ? 80 : level;
     
-    // Pokemon-like stat calculation
+    // Monster-like stat calculation
     const calcHP = (base: number, lvl: number) => Math.floor((base * 2 * lvl) / 100) + lvl + 10;
     const calcOther = (base: number, lvl: number) => Math.floor((base * 2 * lvl) / 100) + 5;
 
@@ -43,7 +43,7 @@ async function init() {
 
   const showSelection = () => {
     const ui = document.getElementById('ui-overlay')!;
-    ui.innerHTML = 'じぶんの ポケモンを えらんで！';
+    ui.innerHTML = 'じぶんの モンスターを えらんで！';
     
     ['bulbasaur', 'charmander', 'squirtle', 'shidoss', 'aruchu'].forEach(id => {
       const def = loader.getMonster(id)!;
@@ -57,7 +57,7 @@ async function init() {
 
   const showEnemySelection = (playerDef: any) => {
     const ui = document.getElementById('ui-overlay')!;
-    ui.innerHTML = 'あいての ポケモンを えらんで！';
+    ui.innerHTML = 'あいての モンスターを えらんで！';
     
     ['bulbasaur', 'charmander', 'squirtle', 'shidoss', 'aruchu'].forEach(id => {
       const def = loader.getMonster(id)!;
@@ -93,7 +93,7 @@ async function init() {
       const options = [
         { label: 'たたかう', action: 'FIGHT' },
         { label: 'バッグ', action: 'BAG' },
-        { label: 'ポケモン', action: 'MON' },
+        { label: 'モンスター', action: 'MON' },
         { label: 'にげる', action: 'RUN' }
       ];
       options.forEach((opt) => {

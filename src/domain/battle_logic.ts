@@ -41,7 +41,7 @@ export function calculateDamage(attacker: MonsterInstance, defender: MonsterInst
   const attackStat = isSpecial ? attacker.stats.spAttack : attacker.stats.attack;
   const defenseStat = isSpecial ? defender.stats.spDefense : defender.stats.defense;
 
-  // Simplified Pokemon damage formula
+  // Simplified Monster damage formula
   // Damage = (((2 * Level / 5 + 2) * Power * A/D) / 50 + 2) * Modifier
   const baseDamage = (((2 * attacker.level / 5 + 2) * move.power * (attackStat / defenseStat)) / 50) + 2;
 

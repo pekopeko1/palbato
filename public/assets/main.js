@@ -554,7 +554,7 @@
     };
     const showSelection = () => {
       const ui = document.getElementById("ui-overlay");
-      ui.innerHTML = "\u3058\u3076\u3093\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
+      ui.innerHTML = "\u3058\u3076\u3093\u306E \u30E2\u30F3\u30B9\u30BF\u30FC\u3092 \u3048\u3089\u3093\u3067\uFF01";
       ["bulbasaur", "charmander", "squirtle", "shidoss", "aruchu"].forEach((id) => {
         const def = loader.getMonster(id);
         const btn = document.createElement("div");
@@ -566,7 +566,7 @@
     };
     const showEnemySelection = (playerDef) => {
       const ui = document.getElementById("ui-overlay");
-      ui.innerHTML = "\u3042\u3044\u3066\u306E \u30DD\u30B1\u30E2\u30F3\u3092 \u3048\u3089\u3093\u3067\uFF01";
+      ui.innerHTML = "\u3042\u3044\u3066\u306E \u30E2\u30F3\u30B9\u30BF\u30FC\u3092 \u3048\u3089\u3093\u3067\uFF01";
       ["bulbasaur", "charmander", "squirtle", "shidoss", "aruchu"].forEach((id) => {
         const def = loader.getMonster(id);
         const btn = document.createElement("div");
@@ -595,7 +595,7 @@
         const options = [
           { label: "\u305F\u305F\u304B\u3046", action: "FIGHT" },
           { label: "\u30D0\u30C3\u30B0", action: "BAG" },
-          { label: "\u30DD\u30B1\u30E2\u30F3", action: "MON" },
+          { label: "\u30E2\u30F3\u30B9\u30BF\u30FC", action: "MON" },
           { label: "\u306B\u3052\u308B", action: "RUN" }
         ];
         options.forEach((opt) => {
@@ -637,4 +637,7 @@
     showSelection();
   }
   init().catch(console.error);
+  window.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded and parsed");
+  });
 })();
