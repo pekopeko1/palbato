@@ -93,7 +93,16 @@ async function init() {
       const ui = document.getElementById('ui-overlay')!;
       ui.innerHTML = '';
       if (state.isFinished) {
-        ui.innerText = state.message;
+        const msg = document.createElement('div');
+        msg.style.marginBottom = '10px';
+        msg.innerText = state.message;
+        ui.appendChild(msg);
+
+        const restartBtn = document.createElement('div');
+        restartBtn.className = 'move-btn';
+        restartBtn.innerText = 'もういちど たたかう';
+        restartBtn.onclick = () => showSelection();
+        ui.appendChild(restartBtn);
         return;
       }
       

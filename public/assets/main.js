@@ -850,7 +850,15 @@
         const ui = document.getElementById("ui-overlay");
         ui.innerHTML = "";
         if (state.isFinished) {
-          ui.innerText = state.message;
+          const msg = document.createElement("div");
+          msg.style.marginBottom = "10px";
+          msg.innerText = state.message;
+          ui.appendChild(msg);
+          const restartBtn = document.createElement("div");
+          restartBtn.className = "move-btn";
+          restartBtn.innerText = "\u3082\u3046\u3044\u3061\u3069 \u305F\u305F\u304B\u3046";
+          restartBtn.onclick = () => showSelection();
+          ui.appendChild(restartBtn);
           return;
         }
         const options = [
