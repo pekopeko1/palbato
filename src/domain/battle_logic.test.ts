@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getEffectiveness, calculateDamage } from './battle_logic';
+import { getEffectiveness, calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn } from './battle_logic';
 import { MonsterInstance, Move } from './models';
 
 describe('battle_logic', () => {
@@ -50,5 +50,69 @@ describe('battle_logic', () => {
     // Random [0.85, 1.0] -> [13.26, 15.6]
     expect(result.damage).toBeGreaterThanOrEqual(13);
     expect(result.damage).toBeLessThanOrEqual(23); // Including possible crit (1.5x)
+  });
+
+  describe('getModifiedSpeed', () => {
+    it('should halve speed when paralyzed', () => {
+      const monster: any = { stats: { speed: 100 }, status: 'PARALYSIS' };
+      expect(getModifiedSpeed(monster)).toBe(50);
+    });
+
+    it('should not change speed when not paralyzed', () => {
+      const monster: any = { stats: { speed: 100 }, status: 'NONE' };
+      expect(getModifiedSpeed(monster)).toBe(100);
+    });
+  });
+
+  describe('canMove', () => {
+    it('should not move when sleeping and statusTurns > 0', () => {
+      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 1 };
+      const result = canMove(monster);
+      expect(result.can).toBe(false);
+      expect(result.message).toContain('ねむっている');
+    });
+
+    it('should wake up when sleeping and statusTurns is 0', () => {
+      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 0 };
+      const result = canMove(monster);
+      expect(result.can).toBe(true);
+      expect(monster.status).toBe('NONE');
+      expect(result.message).toContain('めをさました');
+    });
+  });
+
+  describe('applyStatus', () => {
+    it('should apply poison status', () => {
+      const attacker: any = {};
+      const defender: any = { name: 'D1', status: 'NONE', types: ['NORMAL'] };
+      const move: any = { statusEffect: 'POISON', statusChance: 1 };
+      const result = applyStatus(attacker, defender, move);
+      expect(result.success).toBe(true);
+      expect(defender.status).toBe('POISON');
+    });
+
+    it('should not poison POISON types', () => {
+      const attacker: any = {};
+      const defender: any = { name: 'D1', status: 'NONE', types: ['POISON'] };
+      const move: any = { statusEffect: 'POISON', statusChance: 1 };
+      const result = applyStatus(attacker, defender, move);
+      expect(result.success).toBe(false);
+      expect(defender.status).toBe('NONE');
+    });
+  });
+
+  describe('processEndOfTurn', () => {
+    it('should deal poison damage', () => {
+      const monster: any = { name: 'M1', status: 'POISON', stats: { hp: 80 }, currentHp: 80 };
+      const result = processEndOfTurn(monster);
+      expect(result.damage).toBe(10);
+      expect(monster.currentHp).toBe(70);
+    });
+
+    it('should decrement sleep turns', () => {
+      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 2 };
+      processEndOfTurn(monster);
+      expect(monster.statusTurns).toBe(1);
+    });
   });
 });

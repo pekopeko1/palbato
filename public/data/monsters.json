@@ -13,7 +13,8 @@
     },
     "learnset": [
       { "level": 1, "moveId": "tackle" },
-      { "level": 1, "moveId": "vine_whip" }
+      { "level": 1, "moveId": "vine_whip" },
+      { "level": 1, "moveId": "poison_powder" }
     ],
     "frontSprite": "images/bulbasaur_front.png",
     "backSprite": "images/bulbasaur_back.png"
@@ -72,7 +73,8 @@
       { "level": 1, "moveId": "dragon_rush" },
       { "level": 1, "moveId": "heal_block" },
       { "level": 1, "moveId": "dragon_pulse" },
-      { "level": 1, "moveId": "moonblast" }
+      { "level": 1, "moveId": "moonblast" },
+      { "level": 1, "moveId": "thunder_wave" }
     ],
     "frontSprite": "images/shidoss_front.png",
     "backSprite": "images/shidoss_back.png"
@@ -93,7 +95,8 @@
       { "level": 1, "moveId": "nihil_light" },
       { "level": 1, "moveId": "rest" },
       { "level": 1, "moveId": "amnesia" },
-      { "level": 1, "moveId": "swords_dance" }
+      { "level": 1, "moveId": "swords_dance" },
+      { "level": 1, "moveId": "hypnosis" }
     ],
     "frontSprite": "images/aruchu_front.png",
     "backSprite": "images/aruchu_back.png"

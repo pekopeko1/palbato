@@ -63,4 +63,85 @@ export function calculateDamage(attacker: MonsterInstance, defender: MonsterInst
   return { damage: Math.max(1, totalDamage), multiplier, isCritical };
 }
 
+export function getModifiedSpeed(monster: MonsterInstance): number {
+  let speed = monster.stats.speed;
+  if (monster.status === 'PARALYSIS') {
+    speed = Math.floor(speed * 0.5);
+  }
+  return speed;
+}
+
+export function canMove(monster: MonsterInstance): { can: boolean; message?: string } {
+  if (monster.status === 'SLEEP') {
+    if ((monster.statusTurns || 0) > 0) {
+      return { can: false, message: `${monster.name} は ぐうぐう ねむっている` };
+    } else {
+      monster.status = 'NONE';
+      return { can: true, message: `${monster.name} は めをさました！` };
+    }
+  }
+
+  if (monster.status === 'PARALYSIS') {
+    if (Math.random() < 0.25) {
+      return { can: false, message: `${monster.name} は からだが しびれて うごけない！` };
+    }
+  }
+
+  return { can: true };
+}
+
+export function applyStatus(attacker: MonsterInstance, defender: MonsterInstance, move: Move): { success: boolean; status: StatusEffect; message?: string } {
+  if (!move.statusEffect || move.statusEffect === 'NONE') {
+    return { success: false, status: 'NONE' };
+  }
+
+  if (defender.status !== 'NONE') {
+    return { success: false, status: defender.status };
+  }
+
+  // Immunity checks
+  if (move.statusEffect === 'POISON' && defender.types.includes('POISON')) {
+    return { success: false, status: 'NONE', message: `${defender.name} には きかない！` };
+  }
+  if (move.statusEffect === 'POISON' && defender.types.includes('STEEL')) {
+    return { success: false, status: 'NONE', message: `${defender.name} には きかない！` };
+  }
+
+  if (Math.random() < (move.statusChance || 1)) {
+    defender.status = move.statusEffect;
+    if (move.statusEffect === 'SLEEP') {
+      defender.statusTurns = Math.floor(Math.random() * 3) + 1; // 1-3 turns
+      return { success: true, status: 'SLEEP', message: `${defender.name} は ねむってしまった！` };
+    }
+    if (move.statusEffect === 'POISON') {
+      return { success: true, status: 'POISON', message: `${defender.name} は どくを あびた！` };
+    }
+    if (move.statusEffect === 'PARALYSIS') {
+      return { success: true, status: 'PARALYSIS', message: `${defender.name} は まひしてしまった！` };
+    }
+    // Handle other statuses if needed
+  }
+
+  return { success: false, status: 'NONE' };
+}
+
+export function processEndOfTurn(monster: MonsterInstance): { damage: number; message?: string } {
+  let damage = 0;
+  let message: string | undefined;
+
+  if (monster.status === 'POISON') {
+    damage = Math.floor(monster.stats.hp / 8);
+    monster.currentHp = Math.max(0, monster.currentHp - damage);
+    message = `${monster.name} は どくの ダメージを うけている`;
+  }
+
+  if (monster.status === 'SLEEP') {
+    if ((monster.statusTurns || 0) > 0) {
+      monster.statusTurns! -= 1;
+    }
+  }
+
+  return { damage, message };
+}
+
 // I should probably add types to MonsterInstance to make this easier

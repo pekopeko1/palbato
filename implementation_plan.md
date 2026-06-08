@@ -1,33 +1,35 @@
-# Implementation Plan: Rename 'Pokemon' to 'Monster'
+# Implementation Plan: Status Ailments (Sleep, Poison, Paralysis)
 
-This plan outlines the changes required to replace all occurrences of the term "Pokemon" (and its Japanese equivalent "ポケモン") with "Monster" (and "モンスター") in order to align the game terminology with the requested name.
+This plan outlines the implementation of status ailments (Sleep, Poison, Paralysis) in the battle system.
 
-## 1. Target Files and Changes
+## 1. Model Updates (`src/domain/models.ts`)
+*   **MonsterInstance**: Add `statusTurns?: number` to track the duration of effects like Sleep.
+*   **Move**: Add `statusEffect?: StatusEffect` and `statusChance?: number` (0.0 to 1.0) to define what status an attack can inflict.
 
-### A. Code & UI Elements
-*   **[src/main.ts](file:///home/root11/ドキュメント/MyPrograms/palbato/src/main.ts)**
-    *   Change comment: `// Pokemon-like stat calculation` -> `// Monster-like stat calculation`
-    *   Change UI text: `じぶんの ポケモンを えらんで！` -> `じぶんの モンスターを えらんで！`
-    *   Change UI text: `あいての ポケモンを えらんで！` -> `あいての モンスターを えらんで！`
-    *   Change UI label: `{ label: 'ポケモン', action: 'MON' }` -> `{ label: 'モンスター', action: 'MON' }`
+## 2. Battle Logic Updates (`src/domain/battle_logic.ts`)
+*   **Speed Modification**: Implement `getModifiedSpeed(monster)` to reduce speed by 50% when paralyzed.
+*   **Movement Check**: Implement `canMove(monster)` to handle:
+    *   **Sleep**: Skip turn if `statusTurns > 0`. Wake up when `statusTurns` reaches 0.
+    *   **Paralysis**: 25% chance to skip turn.
+*   **Status Application**: Implement `applyStatus(attacker, defender, move)` to handle the logic of inflicting status effects, considering:
+    *   Probability (`statusChance`).
+    *   Existing status (cannot overlap).
+    *   Type immunities (e.g., Poison types cannot be poisoned).
+*   **End of Turn Processing**: Implement `processEndOfTurn(monster)` to handle:
+    *   **Poison**: Take 1/8 of max HP as damage.
+    *   **Sleep**: Decrement `statusTurns`.
 
-*   **[src/domain/battle_logic.ts](file:///home/root11/ドキュメント/MyPrograms/palbato/src/domain/battle_logic.ts)**
-    *   Change comment: `// Simplified Pokemon damage formula` -> `// Simplified Monster damage formula`
+## 3. Service Updates (`src/application/battle_service.ts`)
+*   **Turn Order**: Use `getModifiedSpeed` to determine which monster moves first.
+*   **Move Execution**: 
+    *   Call `canMove` before processing a move.
+    *   Call `applyStatus` after damage calculation.
+*   **Turn End**: Add an end-of-turn phase to process poison damage and status recovery.
 
-*   **[public/index.html](file:///home/root11/ドキュメント/MyPrograms/palbato/public/index.html)**
-    *   Change title tag: `<title>Palbato - Pokemon Style Battle</title>` -> `<title>Palbato - Monster Style Battle</title>`
+## 4. Verification Steps
+1.  **Unit Tests**: Add tests in `src/domain/battle_logic.test.ts` for all new logic functions.
+2.  **Manual Verification**: Run `npm run build` and verify the game behavior in the browser (if possible, though the focus is on logic).
+3.  **Build**: Ensure `npm run build` completes successfully.
 
-*   **[package.json](file:///home/root11/ドキュメント/MyPrograms/palbato/package.json)**
-    *   Change description: `"Pokemon FireRed style turn-based battle game"` -> `"Monster FireRed style turn-based battle game"`
-
-*   **[request.md](file:///home/root11/ドキュメント/MyPrograms/palbato/request.md)**
-    *   Change references of "ポケモン" to "モンスター" to maintain consistency.
-
-## 2. Verification Steps
-
-1.  **Test**: Run unit tests with `npm run test` to verify no functionality is broken.
-2.  **Build**: Run `npm run build` to compile the TypeScript changes into `public/assets/main.js`.
-3.  **Visual Check**: Re-run the build artifact and verify the game starts and compiles cleanly.
-
-## 3. Commit & Push
-*   Once changes are verified, we will request user permission to commit and push all modifications to the repository in a single commit, per the project guidelines in [GEMINI.md](file:///home/root11/ドキュメント/MyPrograms/palbato/GEMINI.md).
+## 5. Commit & Push
+*   Once verified, commit all changes including `src/` and `public/assets/main.js`.

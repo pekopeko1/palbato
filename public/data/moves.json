@@ -118,5 +118,41 @@
     "accuracy": 100,
     "pp": 20,
     "description": "たたかいの　きもちを　たかめる　おどりを　おどって　じぶんの　こうげきを　ぐーんと　あげる。"
+  },
+  {
+    "id": "poison_powder",
+    "name": "どくのこな",
+    "type": "POISON",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 75,
+    "pp": 35,
+    "description": "どくの　こなを　ふりまいて　あいてを　どく　じょうたいに　する。",
+    "statusEffect": "POISON",
+    "statusChance": 1.0
+  },
+  {
+    "id": "thunder_wave",
+    "name": "でんじは",
+    "type": "ELECTRIC",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 90,
+    "pp": 20,
+    "description": "よわい　でんげきを　あいてに　ぶつけて　まひ　じょうたいに　する。",
+    "statusEffect": "PARALYSIS",
+    "statusChance": 1.0
+  },
+  {
+    "id": "hypnosis",
+    "name": "さいみんじゅつ",
+    "type": "PSYCHIC",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 60,
+    "pp": 20,
+    "description": "あいてに　あんじを　かけて　ふかい　ねむりに　いざなう。",
+    "statusEffect": "SLEEP",
+    "statusChance": 1.0
   }
 ]

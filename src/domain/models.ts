@@ -24,6 +24,8 @@ export interface Move {
   accuracy: number;
   pp: number;
   description: string;
+  statusEffect?: StatusEffect;
+  statusChance?: number;
 }
 
 export interface MonsterDefinition {
@@ -50,6 +52,7 @@ export interface MonsterInstance {
   stats: Stats;
   moves: MoveInstance[];
   status: StatusEffect;
+  statusTurns?: number;
 }
 
 export interface BattleState {

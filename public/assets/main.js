@@ -121,6 +121,42 @@
       accuracy: 100,
       pp: 20,
       description: "\u305F\u305F\u304B\u3044\u306E\u3000\u304D\u3082\u3061\u3092\u3000\u305F\u304B\u3081\u308B\u3000\u304A\u3069\u308A\u3092\u3000\u304A\u3069\u3063\u3066\u3000\u3058\u3076\u3093\u306E\u3000\u3053\u3046\u3052\u304D\u3092\u3000\u3050\u30FC\u3093\u3068\u3000\u3042\u3052\u308B\u3002"
+    },
+    {
+      id: "poison_powder",
+      name: "\u3069\u304F\u306E\u3053\u306A",
+      type: "POISON",
+      category: "STATUS",
+      power: 0,
+      accuracy: 75,
+      pp: 35,
+      description: "\u3069\u304F\u306E\u3000\u3053\u306A\u3092\u3000\u3075\u308A\u307E\u3044\u3066\u3000\u3042\u3044\u3066\u3092\u3000\u3069\u304F\u3000\u3058\u3087\u3046\u305F\u3044\u306B\u3000\u3059\u308B\u3002",
+      statusEffect: "POISON",
+      statusChance: 1
+    },
+    {
+      id: "thunder_wave",
+      name: "\u3067\u3093\u3058\u306F",
+      type: "ELECTRIC",
+      category: "STATUS",
+      power: 0,
+      accuracy: 90,
+      pp: 20,
+      description: "\u3088\u308F\u3044\u3000\u3067\u3093\u3052\u304D\u3092\u3000\u3042\u3044\u3066\u306B\u3000\u3076\u3064\u3051\u3066\u3000\u307E\u3072\u3000\u3058\u3087\u3046\u305F\u3044\u306B\u3000\u3059\u308B\u3002",
+      statusEffect: "PARALYSIS",
+      statusChance: 1
+    },
+    {
+      id: "hypnosis",
+      name: "\u3055\u3044\u307F\u3093\u3058\u3085\u3064",
+      type: "PSYCHIC",
+      category: "STATUS",
+      power: 0,
+      accuracy: 60,
+      pp: 20,
+      description: "\u3042\u3044\u3066\u306B\u3000\u3042\u3093\u3058\u3092\u3000\u304B\u3051\u3066\u3000\u3075\u304B\u3044\u3000\u306D\u3080\u308A\u306B\u3000\u3044\u3056\u306A\u3046\u3002",
+      statusEffect: "SLEEP",
+      statusChance: 1
     }
   ];
 
@@ -140,7 +176,8 @@
       },
       learnset: [
         { level: 1, moveId: "tackle" },
-        { level: 1, moveId: "vine_whip" }
+        { level: 1, moveId: "vine_whip" },
+        { level: 1, moveId: "poison_powder" }
       ],
       frontSprite: "images/bulbasaur_front.png",
       backSprite: "images/bulbasaur_back.png"
@@ -199,7 +236,8 @@
         { level: 1, moveId: "dragon_rush" },
         { level: 1, moveId: "heal_block" },
         { level: 1, moveId: "dragon_pulse" },
-        { level: 1, moveId: "moonblast" }
+        { level: 1, moveId: "moonblast" },
+        { level: 1, moveId: "thunder_wave" }
       ],
       frontSprite: "images/shidoss_front.png",
       backSprite: "images/shidoss_back.png"
@@ -220,7 +258,8 @@
         { level: 1, moveId: "nihil_light" },
         { level: 1, moveId: "rest" },
         { level: 1, moveId: "amnesia" },
-        { level: 1, moveId: "swords_dance" }
+        { level: 1, moveId: "swords_dance" },
+        { level: 1, moveId: "hypnosis" }
       ],
       frontSprite: "images/aruchu_front.png",
       backSprite: "images/aruchu_back.png"
@@ -453,6 +492,72 @@
     const totalDamage = Math.floor(baseDamage * critMultiplier * randomFactor * stab * multiplier);
     return { damage: Math.max(1, totalDamage), multiplier, isCritical };
   }
+  function getModifiedSpeed(monster) {
+    let speed = monster.stats.speed;
+    if (monster.status === "PARALYSIS") {
+      speed = Math.floor(speed * 0.5);
+    }
+    return speed;
+  }
+  function canMove(monster) {
+    if (monster.status === "SLEEP") {
+      if ((monster.statusTurns || 0) > 0) {
+        return { can: false, message: `${monster.name} \u306F \u3050\u3046\u3050\u3046 \u306D\u3080\u3063\u3066\u3044\u308B` };
+      } else {
+        monster.status = "NONE";
+        return { can: true, message: `${monster.name} \u306F \u3081\u3092\u3055\u307E\u3057\u305F\uFF01` };
+      }
+    }
+    if (monster.status === "PARALYSIS") {
+      if (Math.random() < 0.25) {
+        return { can: false, message: `${monster.name} \u306F \u304B\u3089\u3060\u304C \u3057\u3073\u308C\u3066 \u3046\u3054\u3051\u306A\u3044\uFF01` };
+      }
+    }
+    return { can: true };
+  }
+  function applyStatus(attacker, defender, move) {
+    if (!move.statusEffect || move.statusEffect === "NONE") {
+      return { success: false, status: "NONE" };
+    }
+    if (defender.status !== "NONE") {
+      return { success: false, status: defender.status };
+    }
+    if (move.statusEffect === "POISON" && defender.types.includes("POISON")) {
+      return { success: false, status: "NONE", message: `${defender.name} \u306B\u306F \u304D\u304B\u306A\u3044\uFF01` };
+    }
+    if (move.statusEffect === "POISON" && defender.types.includes("STEEL")) {
+      return { success: false, status: "NONE", message: `${defender.name} \u306B\u306F \u304D\u304B\u306A\u3044\uFF01` };
+    }
+    if (Math.random() < (move.statusChance || 1)) {
+      defender.status = move.statusEffect;
+      if (move.statusEffect === "SLEEP") {
+        defender.statusTurns = Math.floor(Math.random() * 3) + 1;
+        return { success: true, status: "SLEEP", message: `${defender.name} \u306F \u306D\u3080\u3063\u3066\u3057\u307E\u3063\u305F\uFF01` };
+      }
+      if (move.statusEffect === "POISON") {
+        return { success: true, status: "POISON", message: `${defender.name} \u306F \u3069\u304F\u3092 \u3042\u3073\u305F\uFF01` };
+      }
+      if (move.statusEffect === "PARALYSIS") {
+        return { success: true, status: "PARALYSIS", message: `${defender.name} \u306F \u307E\u3072\u3057\u3066\u3057\u307E\u3063\u305F\uFF01` };
+      }
+    }
+    return { success: false, status: "NONE" };
+  }
+  function processEndOfTurn(monster) {
+    let damage = 0;
+    let message;
+    if (monster.status === "POISON") {
+      damage = Math.floor(monster.stats.hp / 8);
+      monster.currentHp = Math.max(0, monster.currentHp - damage);
+      message = `${monster.name} \u306F \u3069\u304F\u306E \u30C0\u30E1\u30FC\u30B8\u3092 \u3046\u3051\u3066\u3044\u308B`;
+    }
+    if (monster.status === "SLEEP") {
+      if ((monster.statusTurns || 0) > 0) {
+        monster.statusTurns -= 1;
+      }
+    }
+    return { damage, message };
+  }
 
   // src/application/battle_service.ts
   var BattleService = class {
@@ -477,7 +582,9 @@
     async executeTurn(playerMoveInstance) {
       if (this.state.isFinished) return;
       const enemyMoveInstance = this.state.enemyMonster.moves[0];
-      const playerFirst = this.state.playerMonster.stats.speed >= this.state.enemyMonster.stats.speed;
+      const playerSpeed = getModifiedSpeed(this.state.playerMonster);
+      const enemySpeed = getModifiedSpeed(this.state.enemyMonster);
+      const playerFirst = playerSpeed >= enemySpeed;
       if (playerFirst) {
         await this.processMove(this.state.playerMonster, this.state.enemyMonster, playerMoveInstance);
         await this.delay(1e3);
@@ -492,12 +599,41 @@
         }
       }
       if (!this.state.isFinished) {
+        await this.handleEndOfTurn(this.state.playerMonster);
+        if (!this.state.isFinished) {
+          await this.handleEndOfTurn(this.state.enemyMonster);
+        }
+      }
+      if (!this.state.isFinished) {
         this.state.turnCount++;
         this.state.message = "\u3069\u3046\u3059\u308B\uFF1F";
         if (this.onUpdate) this.onUpdate();
       }
     }
+    async handleEndOfTurn(monster) {
+      const result = processEndOfTurn(monster);
+      if (result.message) {
+        this.state.message = result.message;
+        if (this.onUpdate) this.onUpdate();
+        await this.delay(1e3);
+      }
+      if (monster.currentHp <= 0) {
+        this.state.isFinished = true;
+        this.state.winner = monster === this.state.playerMonster ? "ENEMY" : "PLAYER";
+        this.state.message = `${monster.name} \u306F \u305F\u304A\u308C\u305F\uFF01`;
+        if (this.onUpdate) this.onUpdate();
+      }
+    }
     async processMove(attacker, defender, moveInstance) {
+      const canMoveResult = canMove(attacker);
+      if (canMoveResult.message) {
+        this.state.message = canMoveResult.message;
+        if (this.onUpdate) this.onUpdate();
+        await this.delay(800);
+      }
+      if (!canMoveResult.can) {
+        return;
+      }
       this.state.message = `${attacker.name} \u306E ${moveInstance.move.name}\uFF01`;
       if (this.onUpdate) this.onUpdate();
       await this.delay(800);
@@ -505,17 +641,30 @@
       const result = calculateDamage(attacker, defender, moveInstance.move);
       defender.currentHp = Math.max(0, defender.currentHp - result.damage);
       let resultMsg = `${result.damage} \u306E \u30C0\u30E1\u30FC\u30B8\uFF01`;
-      if (result.multiplier > 1) resultMsg = "\u3053\u3046\u304B\u306F \u3070\u3064\u3050\u3093\u3060\uFF01";
-      if (result.multiplier < 1 && result.multiplier > 0) resultMsg = "\u3053\u3046\u304B\u306F \u3044\u307E\u3072\u3068\u3064 \u307F\u305F\u3044\u3060\u2026";
-      if (result.isCritical) resultMsg = "\u304D\u3085\u3046\u3057\u3087\u306B \u3042\u305F\u3063\u305F\uFF01";
-      this.state.message = resultMsg;
-      if (this.onUpdate) this.onUpdate();
-      await this.delay(800);
+      if (moveInstance.move.category !== "STATUS") {
+        if (result.multiplier > 1) resultMsg = "\u3053\u3046\u304B\u306F \u3070\u3064\u3050\u3093\u3060\uFF01";
+        if (result.multiplier < 1 && result.multiplier > 0) resultMsg = "\u3053\u3046\u304B\u306F \u3044\u307E\u3072\u3068\u3064 \u307F\u305F\u3044\u3060\u2026";
+        if (result.isCritical) resultMsg = "\u304D\u3085\u3046\u3057\u3087\u306B \u3042\u305F\u3063\u305F\uFF01";
+      } else {
+        resultMsg = "";
+      }
+      if (resultMsg) {
+        this.state.message = resultMsg;
+        if (this.onUpdate) this.onUpdate();
+        await this.delay(800);
+      }
       if (defender.currentHp <= 0) {
         this.state.isFinished = true;
         this.state.winner = attacker === this.state.playerMonster ? "PLAYER" : "ENEMY";
         this.state.message = `${defender.name} \u306F \u305F\u304A\u308C\u305F\uFF01`;
         if (this.onUpdate) this.onUpdate();
+        return;
+      }
+      const statusResult = applyStatus(attacker, defender, moveInstance.move);
+      if (statusResult.message) {
+        this.state.message = statusResult.message;
+        if (this.onUpdate) this.onUpdate();
+        await this.delay(800);
       }
     }
   };
