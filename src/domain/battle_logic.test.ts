@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getEffectiveness, calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn } from './battle_logic';
+import { getEffectiveness, calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn, getStatMultiplier, applyStatChanges, applyRest } from './battle_logic';
 import { MonsterInstance, Move } from './models';
 
 describe('battle_logic', () => {
@@ -19,7 +19,9 @@ describe('battle_logic', () => {
       level: 5,
       currentHp: 20,
       stats: { hp: 20, attack: 10, defense: 10, spAttack: 10, spDefense: 10, speed: 10 },
-      moves: []
+      statStages: { attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 },
+      moves: [],
+      status: 'NONE'
     };
 
     const defender: MonsterInstance = {
@@ -29,7 +31,9 @@ describe('battle_logic', () => {
       level: 5,
       currentHp: 20,
       stats: { hp: 20, attack: 10, defense: 10, spAttack: 10, spDefense: 10, speed: 10 },
-      moves: []
+      statStages: { attack: 0, defense: 0, spAttack: 0, spDefense: 0, speed: 0 },
+      moves: [],
+      status: 'NONE'
     };
 
     const move: Move = {
@@ -54,26 +58,26 @@ describe('battle_logic', () => {
 
   describe('getModifiedSpeed', () => {
     it('should halve speed when paralyzed', () => {
-      const monster: any = { stats: { speed: 100 }, status: 'PARALYSIS' };
+      const monster: any = { stats: { speed: 100 }, statStages: { speed: 0 }, status: 'PARALYSIS' };
       expect(getModifiedSpeed(monster)).toBe(50);
     });
 
     it('should not change speed when not paralyzed', () => {
-      const monster: any = { stats: { speed: 100 }, status: 'NONE' };
+      const monster: any = { stats: { speed: 100 }, statStages: { speed: 0 }, status: 'NONE' };
       expect(getModifiedSpeed(monster)).toBe(100);
     });
   });
 
   describe('canMove', () => {
     it('should not move when sleeping and statusTurns > 0', () => {
-      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 1 };
+      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 1, statStages: {} };
       const result = canMove(monster);
       expect(result.can).toBe(false);
       expect(result.message).toContain('ねむっている');
     });
 
     it('should wake up when sleeping and statusTurns is 0', () => {
-      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 0 };
+      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 0, statStages: {} };
       const result = canMove(monster);
       expect(result.can).toBe(true);
       expect(monster.status).toBe('NONE');
@@ -83,8 +87,8 @@ describe('battle_logic', () => {
 
   describe('applyStatus', () => {
     it('should apply poison status', () => {
-      const attacker: any = {};
-      const defender: any = { name: 'D1', status: 'NONE', types: ['NORMAL'] };
+      const attacker: any = { statStages: {} };
+      const defender: any = { name: 'D1', status: 'NONE', types: ['NORMAL'], statStages: {} };
       const move: any = { statusEffect: 'POISON', statusChance: 1 };
       const result = applyStatus(attacker, defender, move);
       expect(result.success).toBe(true);
@@ -92,8 +96,8 @@ describe('battle_logic', () => {
     });
 
     it('should not poison POISON types', () => {
-      const attacker: any = {};
-      const defender: any = { name: 'D1', status: 'NONE', types: ['POISON'] };
+      const attacker: any = { statStages: {} };
+      const defender: any = { name: 'D1', status: 'NONE', types: ['POISON'], statStages: {} };
       const move: any = { statusEffect: 'POISON', statusChance: 1 };
       const result = applyStatus(attacker, defender, move);
       expect(result.success).toBe(false);
@@ -103,16 +107,52 @@ describe('battle_logic', () => {
 
   describe('processEndOfTurn', () => {
     it('should deal poison damage', () => {
-      const monster: any = { name: 'M1', status: 'POISON', stats: { hp: 80 }, currentHp: 80 };
+      const monster: any = { name: 'M1', status: 'POISON', stats: { hp: 80 }, currentHp: 80, statStages: {} };
       const result = processEndOfTurn(monster);
       expect(result.damage).toBe(10);
       expect(monster.currentHp).toBe(70);
     });
 
     it('should decrement sleep turns', () => {
-      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 2 };
+      const monster: any = { name: 'M1', status: 'SLEEP', statusTurns: 2, statStages: {} };
       processEndOfTurn(monster);
       expect(monster.statusTurns).toBe(1);
+    });
+  });
+
+  describe('getStatMultiplier', () => {
+    it('should return correct multipliers', () => {
+      expect(getStatMultiplier(0)).toBe(1);
+      expect(getStatMultiplier(2)).toBe(2);
+      expect(getStatMultiplier(-2)).toBe(0.5);
+    });
+  });
+
+  describe('applyStatChanges', () => {
+    it('should increase attack by 2 stages', () => {
+      const attacker: any = { name: 'A1', statStages: { attack: 0 } };
+      const move: any = { statChanges: { attack: 2 }, target: 'SELF' };
+      const results = applyStatChanges(attacker, null as any, move);
+      expect(attacker.statStages.attack).toBe(2);
+      expect(results[0].message).toContain('こうげき が ぐーんと あがった');
+    });
+
+    it('should not increase beyond 6 stages', () => {
+      const attacker: any = { name: 'A1', statStages: { attack: 6 } };
+      const move: any = { statChanges: { attack: 2 }, target: 'SELF' };
+      const results = applyStatChanges(attacker, null as any, move);
+      expect(attacker.statStages.attack).toBe(6);
+      expect(results[0].message).toContain('これいじょう あがらない');
+    });
+  });
+
+  describe('applyRest', () => {
+    it('should restore HP and set sleep status', () => {
+      const monster: any = { name: 'M1', stats: { hp: 100 }, currentHp: 10, status: 'POISON' };
+      applyRest(monster);
+      expect(monster.currentHp).toBe(100);
+      expect(monster.status).toBe('SLEEP');
+      expect(monster.statusTurns).toBe(2);
     });
   });
 });

@@ -1,5 +1,5 @@
 import { BattleState, MonsterInstance, MoveInstance } from '../domain/models';
-import { calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn } from '../domain/battle_logic';
+import { calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn, applyStatChanges, applyRest } from '../domain/battle_logic';
 
 export class BattleService {
   private state: BattleState;
@@ -121,6 +121,24 @@ export class BattleService {
       this.state.message = `${defender.name} は たおれた！`;
       if (this.onUpdate) this.onUpdate();
       return;
+    }
+
+    // Special logic for Rest
+    if (moveInstance.move.isRest) {
+      const restResults = applyRest(attacker);
+      for (const res of restResults) {
+        this.state.message = res.message;
+        if (this.onUpdate) this.onUpdate();
+        await this.delay(800);
+      }
+    }
+
+    // Apply stat changes
+    const statResults = applyStatChanges(attacker, defender, moveInstance.move);
+    for (const res of statResults) {
+      this.state.message = res.message;
+      if (this.onUpdate) this.onUpdate();
+      await this.delay(800);
     }
 
     // Apply status effect

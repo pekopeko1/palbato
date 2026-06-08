@@ -33,6 +33,13 @@ async function init() {
       level: finalLevel,
       currentHp: stats.hp,
       stats: stats,
+      statStages: {
+        attack: 0,
+        defense: 0,
+        spAttack: 0,
+        spDefense: 0,
+        speed: 0
+      },
       moves: def.learnset.map((l: any) => {
         const move = loader.getMove(l.moveId);
         return move ? { move, currentPp: move.pp } : null;

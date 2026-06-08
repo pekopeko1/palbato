@@ -100,7 +100,8 @@
       power: 0,
       accuracy: 100,
       pp: 10,
-      description: "\uFF12\u30BF\u30FC\u30F3\u306E\u3000\u3042\u3044\u3060\u3000\u306D\u3080\u3063\u3066\u3000\u3058\u3076\u3093\u306E\u3000\uFF28\uFF30\u3068\u3000\u3058\u3087\u3046\u305F\u3044\u3058\u3087\u3046\u3092\u3000\u3059\u3079\u3066\u3000\u304B\u3044\u3075\u304F\u3059\u308B\u3002"
+      description: "\uFF12\u30BF\u30FC\u30F3\u306E\u3000\u3042\u3044\u3060\u3000\u306D\u3080\u3063\u3066\u3000\u3058\u3076\u3093\u306E\u3000\uFF28\uFF30\u3068\u3000\u3058\u3087\u3046\u305F\u3044\u3058\u3087\u3046\u3092\u3000\u3059\u3079\u3066\u3000\u304B\u3044\u3075\u304F\u3059\u308B\u3002",
+      isRest: true
     },
     {
       id: "amnesia",
@@ -110,7 +111,9 @@
       power: 0,
       accuracy: 100,
       pp: 20,
-      description: "\u3044\u3063\u3057\u3085\u3093\u3000\u306A\u306B\u304B\u3092\u3000\u308F\u3059\u308C\u308B\u3053\u3068\u3067\u3000\u3058\u3076\u3093\u306E\u3000\u3068\u304F\u307C\u3046\u3092\u3000\u3050\u30FC\u3093\u3068\u3000\u3042\u3052\u308B\u3002"
+      description: "\u3044\u3063\u3057\u3085\u3093\u3000\u306A\u306B\u304B\u3092\u3000\u308F\u3059\u308C\u308B\u3053\u3068\u3067\u3000\u3058\u3076\u3093\u306E\u3000\u3068\u304F\u307C\u3046\u3092\u3000\u3050\u30FC\u3093\u3068\u3000\u3042\u3052\u308B\u3002",
+      statChanges: { spDefense: 2 },
+      target: "SELF"
     },
     {
       id: "swords_dance",
@@ -120,7 +123,9 @@
       power: 0,
       accuracy: 100,
       pp: 20,
-      description: "\u305F\u305F\u304B\u3044\u306E\u3000\u304D\u3082\u3061\u3092\u3000\u305F\u304B\u3081\u308B\u3000\u304A\u3069\u308A\u3092\u3000\u304A\u3069\u3063\u3066\u3000\u3058\u3076\u3093\u306E\u3000\u3053\u3046\u3052\u304D\u3092\u3000\u3050\u30FC\u3093\u3068\u3000\u3042\u3052\u308B\u3002"
+      description: "\u305F\u305F\u304B\u3044\u306E\u3000\u304D\u3082\u3061\u3092\u3000\u305F\u304B\u3081\u308B\u3000\u304A\u3069\u308A\u3092\u3000\u304A\u3069\u3063\u3066\u3000\u3058\u3076\u3093\u306E\u3000\u3053\u3046\u3052\u304D\u3092\u3000\u3050\u30FC\u3093\u3068\u3000\u3042\u3052\u308B\u3002",
+      statChanges: { attack: 2 },
+      target: "SELF"
     },
     {
       id: "poison_powder",
@@ -476,13 +481,24 @@
     }
     return multiplier;
   }
+  function getStatMultiplier(stage) {
+    if (stage >= 0) {
+      return (2 + stage) / 2;
+    } else {
+      return 2 / (2 - stage);
+    }
+  }
   function calculateDamage(attacker, defender, move) {
     if (move.category === "STATUS") {
       return { damage: 0, multiplier: 1, isCritical: false };
     }
     const isSpecial = move.category === "SPECIAL";
-    const attackStat = isSpecial ? attacker.stats.spAttack : attacker.stats.attack;
-    const defenseStat = isSpecial ? defender.stats.spDefense : defender.stats.defense;
+    let attackStat = isSpecial ? attacker.stats.spAttack : attacker.stats.attack;
+    let defenseStat = isSpecial ? defender.stats.spDefense : defender.stats.defense;
+    const attackStage = isSpecial ? attacker.statStages.spAttack : attacker.statStages.attack;
+    attackStat = Math.floor(attackStat * getStatMultiplier(attackStage));
+    const targetDefenseStage = isSpecial ? defender.statStages.spDefense : defender.statStages.defense;
+    defenseStat = Math.floor(defenseStat * getStatMultiplier(targetDefenseStage));
     const baseDamage = (2 * attacker.level / 5 + 2) * move.power * (attackStat / defenseStat) / 50 + 2;
     const isCritical = Math.random() < 0.0625;
     const critMultiplier = isCritical ? 1.5 : 1;
@@ -493,7 +509,7 @@
     return { damage: Math.max(1, totalDamage), multiplier, isCritical };
   }
   function getModifiedSpeed(monster) {
-    let speed = monster.stats.speed;
+    let speed = Math.floor(monster.stats.speed * getStatMultiplier(monster.statStages.speed));
     if (monster.status === "PARALYSIS") {
       speed = Math.floor(speed * 0.5);
     }
@@ -542,6 +558,44 @@
       }
     }
     return { success: false, status: "NONE" };
+  }
+  function applyStatChanges(attacker, defender, move) {
+    if (!move.statChanges) return [];
+    const target = move.target === "SELF" ? attacker : defender;
+    const messages = [];
+    for (const [stat, change] of Object.entries(move.statChanges)) {
+      const oldStage = target.statStages[stat];
+      const newStage = Math.max(-6, Math.min(6, oldStage + change));
+      if (newStage === oldStage) {
+        const direction = change > 0 ? "\u3053\u308C\u3044\u3058\u3087\u3046 \u3042\u304C\u3089\u306A\u3044\uFF01" : "\u3053\u308C\u3044\u3058\u3087\u3046 \u3055\u304C\u3089\u306A\u3044\uFF01";
+        messages.push({ message: `${target.name} \u306E ${stat} \u306F ${direction}` });
+        continue;
+      }
+      target.statStages[stat] = newStage;
+      const actualChange = newStage - oldStage;
+      let changeMsg = "";
+      if (actualChange >= 2) changeMsg = "\u3050\u30FC\u3093\u3068 \u3042\u304C\u3063\u305F\uFF01";
+      else if (actualChange === 1) changeMsg = "\u3042\u304C\u3063\u305F\uFF01";
+      else if (actualChange === -1) changeMsg = "\u3055\u304C\u3063\u305F\uFF01";
+      else if (actualChange <= -2) changeMsg = "\u304C\u304F\u3063\u3068 \u3055\u304C\u3063\u305F\uFF01";
+      const statNames = {
+        attack: "\u3053\u3046\u3052\u304D",
+        defense: "\u307C\u3046\u304E\u3087",
+        spAttack: "\u3068\u304F\u3053\u3046",
+        spDefense: "\u3068\u304F\u307C\u3046",
+        speed: "\u3059\u3070\u3084\u3055"
+      };
+      messages.push({ message: `${target.name} \u306E ${statNames[stat]} \u304C ${changeMsg}` });
+    }
+    return messages;
+  }
+  function applyRest(monster) {
+    monster.currentHp = monster.stats.hp;
+    monster.status = "SLEEP";
+    monster.statusTurns = 2;
+    return [
+      { message: `${monster.name} \u306F \u306D\u3080\u3063\u3066 \uFF28\uFF30\u3092 \u304B\u3044\u3075\u304F\u3057\u305F\uFF01` }
+    ];
   }
   function processEndOfTurn(monster) {
     let damage = 0;
@@ -660,6 +714,20 @@
         if (this.onUpdate) this.onUpdate();
         return;
       }
+      if (moveInstance.move.isRest) {
+        const restResults = applyRest(attacker);
+        for (const res of restResults) {
+          this.state.message = res.message;
+          if (this.onUpdate) this.onUpdate();
+          await this.delay(800);
+        }
+      }
+      const statResults = applyStatChanges(attacker, defender, moveInstance.move);
+      for (const res of statResults) {
+        this.state.message = res.message;
+        if (this.onUpdate) this.onUpdate();
+        await this.delay(800);
+      }
       const statusResult = applyStatus(attacker, defender, moveInstance.move);
       if (statusResult.message) {
         this.state.message = statusResult.message;
@@ -694,6 +762,13 @@
         level: finalLevel,
         currentHp: stats.hp,
         stats,
+        statStages: {
+          attack: 0,
+          defense: 0,
+          spAttack: 0,
+          spDefense: 0,
+          speed: 0
+        },
         moves: def.learnset.map((l) => {
           const move = loader.getMove(l.moveId);
           return move ? { move, currentPp: move.pp } : null;

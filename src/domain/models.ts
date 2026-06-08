@@ -15,6 +15,14 @@ export interface Stats {
   speed: number;
 }
 
+export interface StatStages {
+  attack: number;
+  defense: number;
+  spAttack: number;
+  spDefense: number;
+  speed: number;
+}
+
 export interface Move {
   id: string;
   name: string;
@@ -26,6 +34,9 @@ export interface Move {
   description: string;
   statusEffect?: StatusEffect;
   statusChance?: number;
+  statChanges?: Partial<StatStages>;
+  target?: 'SELF' | 'OPPONENT';
+  isRest?: boolean;
 }
 
 export interface MonsterDefinition {
@@ -50,6 +61,7 @@ export interface MonsterInstance {
   level: number;
   currentHp: number;
   stats: Stats;
+  statStages: StatStages;
   moves: MoveInstance[];
   status: StatusEffect;
   statusTurns?: number;

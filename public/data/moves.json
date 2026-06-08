@@ -97,7 +97,8 @@
     "power": 0,
     "accuracy": 100,
     "pp": 10,
-    "description": "２ターンの　あいだ　ねむって　じぶんの　ＨＰと　じょうたいじょうを　すべて　かいふくする。"
+    "description": "２ターンの　あいだ　ねむって　じぶんの　ＨＰと　じょうたいじょうを　すべて　かいふくする。",
+    "isRest": true
   },
   {
     "id": "amnesia",
@@ -107,7 +108,9 @@
     "power": 0,
     "accuracy": 100,
     "pp": 20,
-    "description": "いっしゅん　なにかを　わすれることで　じぶんの　とくぼうを　ぐーんと　あげる。"
+    "description": "いっしゅん　なにかを　わすれることで　じぶんの　とくぼうを　ぐーんと　あげる。",
+    "statChanges": { "spDefense": 2 },
+    "target": "SELF"
   },
   {
     "id": "swords_dance",
@@ -117,7 +120,9 @@
     "power": 0,
     "accuracy": 100,
     "pp": 20,
-    "description": "たたかいの　きもちを　たかめる　おどりを　おどって　じぶんの　こうげきを　ぐーんと　あげる。"
+    "description": "たたかいの　きもちを　たかめる　おどりを　おどって　じぶんの　こうげきを　ぐーんと　あげる。",
+    "statChanges": { "attack": 2 },
+    "target": "SELF"
   },
   {
     "id": "poison_powder",

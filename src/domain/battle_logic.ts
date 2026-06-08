@@ -1,4 +1,4 @@
-import { ElementType, MonsterInstance, Move, Stats } from './models';
+import { ElementType, MonsterInstance, Move, Stats, StatStages, StatusEffect } from './models';
 
 const TypeEffectiveness: Record<ElementType, Partial<Record<ElementType, number>>> = {
   NORMAL: { ROCK: 0.5, GHOST: 0, STEEL: 0.5 },
@@ -32,14 +32,29 @@ export function getEffectiveness(moveType: ElementType, targetTypes: ElementType
   return multiplier;
 }
 
+export function getStatMultiplier(stage: number): number {
+  if (stage >= 0) {
+    return (2 + stage) / 2;
+  } else {
+    return 2 / (2 - stage);
+  }
+}
+
 export function calculateDamage(attacker: MonsterInstance, defender: MonsterInstance, move: Move): { damage: number; multiplier: number; isCritical: boolean } {
   if (move.category === 'STATUS') {
     return { damage: 0, multiplier: 1, isCritical: false };
   }
 
   const isSpecial = move.category === 'SPECIAL';
-  const attackStat = isSpecial ? attacker.stats.spAttack : attacker.stats.attack;
-  const defenseStat = isSpecial ? defender.stats.spDefense : defender.stats.defense;
+  let attackStat = isSpecial ? attacker.stats.spAttack : attacker.stats.attack;
+  let defenseStat = isSpecial ? defender.stats.spDefense : defender.stats.defense;
+
+  // Apply stat stages
+  const attackStage = isSpecial ? attacker.statStages.spAttack : attacker.statStages.attack;
+  attackStat = Math.floor(attackStat * getStatMultiplier(attackStage));
+
+  const targetDefenseStage = isSpecial ? defender.statStages.spDefense : defender.statStages.defense;
+  defenseStat = Math.floor(defenseStat * getStatMultiplier(targetDefenseStage));
 
   // Simplified Monster damage formula
   // Damage = (((2 * Level / 5 + 2) * Power * A/D) / 50 + 2) * Modifier
@@ -64,7 +79,7 @@ export function calculateDamage(attacker: MonsterInstance, defender: MonsterInst
 }
 
 export function getModifiedSpeed(monster: MonsterInstance): number {
-  let speed = monster.stats.speed;
+  let speed = Math.floor(monster.stats.speed * getStatMultiplier(monster.statStages.speed));
   if (monster.status === 'PARALYSIS') {
     speed = Math.floor(speed * 0.5);
   }
@@ -119,10 +134,58 @@ export function applyStatus(attacker: MonsterInstance, defender: MonsterInstance
     if (move.statusEffect === 'PARALYSIS') {
       return { success: true, status: 'PARALYSIS', message: `${defender.name} は まひしてしまった！` };
     }
-    // Handle other statuses if needed
   }
 
   return { success: false, status: 'NONE' };
+}
+
+export function applyStatChanges(attacker: MonsterInstance, defender: MonsterInstance, move: Move): { message: string }[] {
+  if (!move.statChanges) return [];
+
+  const target = move.target === 'SELF' ? attacker : defender;
+  const messages: { message: string }[] = [];
+
+  for (const [stat, change] of Object.entries(move.statChanges) as [keyof StatStages, number][]) {
+    const oldStage = target.statStages[stat];
+    const newStage = Math.max(-6, Math.min(6, oldStage + change));
+
+    if (newStage === oldStage) {
+      const direction = change > 0 ? "これいじょう あがらない！" : "これいじょう さがらない！";
+      messages.push({ message: `${target.name} の ${stat} は ${direction}` });
+      continue;
+    }
+
+    target.statStages[stat] = newStage;
+    const actualChange = newStage - oldStage;
+
+    let changeMsg = "";
+    if (actualChange >= 2) changeMsg = "ぐーんと あがった！";
+    else if (actualChange === 1) changeMsg = "あがった！";
+    else if (actualChange === -1) changeMsg = "さがった！";
+    else if (actualChange <= -2) changeMsg = "がくっと さがった！";
+
+    // Japanese stat names
+    const statNames: Record<string, string> = {
+      attack: "こうげき",
+      defense: "ぼうぎょ",
+      spAttack: "とくこう",
+      spDefense: "とくぼう",
+      speed: "すばやさ"
+    };
+
+    messages.push({ message: `${target.name} の ${statNames[stat]} が ${changeMsg}` });
+  }
+
+  return messages;
+}
+
+export function applyRest(monster: MonsterInstance): { message: string }[] {
+  monster.currentHp = monster.stats.hp;
+  monster.status = 'SLEEP';
+  monster.statusTurns = 2; // Fixed 2 turns for Rest
+  return [
+    { message: `${monster.name} は ねむって ＨＰを かいふくした！` }
+  ];
 }
 
 export function processEndOfTurn(monster: MonsterInstance): { damage: number; message?: string } {
@@ -143,5 +206,3 @@ export function processEndOfTurn(monster: MonsterInstance): { damage: number; me
 
   return { damage, message };
 }
-
-// I should probably add types to MonsterInstance to make this easier
