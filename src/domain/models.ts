@@ -71,7 +71,8 @@ export interface BattleState {
   playerMonster: MonsterInstance;
   enemyMonster: MonsterInstance;
   turnCount: number;
+  escapeAttempts: number;
   isFinished: boolean;
-  winner: 'PLAYER' | 'ENEMY' | null;
+  winner: 'PLAYER' | 'ENEMY' | 'ESCAPED' | null;
   message: string;
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getEffectiveness, calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn, getStatMultiplier, applyStatChanges, applyRest } from './battle_logic';
+import { getEffectiveness, calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn, getStatMultiplier, applyStatChanges, applyRest, calculateEscapeSuccess } from './battle_logic';
 import { MonsterInstance, Move } from './models';
 
 describe('battle_logic', () => {
@@ -153,6 +153,17 @@ describe('battle_logic', () => {
       expect(monster.currentHp).toBe(100);
       expect(monster.status).toBe('SLEEP');
       expect(monster.statusTurns).toBe(2);
+    });
+  });
+
+  describe('calculateEscapeSuccess', () => {
+    it('should always succeed if player is faster', () => {
+      expect(calculateEscapeSuccess(100, 50, 1)).toBe(true);
+    });
+
+    it('should eventually succeed with enough attempts', () => {
+      // 30 * 10 = 300, which is > 255
+      expect(calculateEscapeSuccess(1, 100, 10)).toBe(true);
     });
   });
 });

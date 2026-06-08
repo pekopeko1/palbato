@@ -107,8 +107,15 @@ async function init() {
         const btn = document.createElement('div');
         btn.className = 'move-btn';
         btn.innerText = opt.label;
-        btn.onclick = () => {
+        btn.onclick = async () => {
           if (opt.action === 'FIGHT') showMoves(battleService, updateUI, playerMonster);
+          else if (opt.action === 'RUN') {
+            ui.innerHTML = 'バトル中...';
+            await battleService.attemptEscape();
+            renderer.render(battleService.getState());
+            await new Promise(r => setTimeout(r, 1000));
+            updateUI();
+          }
           else alert('まだ実装されていません！');
         };
         ui.appendChild(btn);

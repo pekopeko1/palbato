@@ -1,5 +1,5 @@
 import { BattleState, MonsterInstance, MoveInstance } from '../domain/models';
-import { calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn, applyStatChanges, applyRest } from '../domain/battle_logic';
+import { calculateDamage, getModifiedSpeed, canMove, applyStatus, processEndOfTurn, applyStatChanges, applyRest, calculateEscapeSuccess } from '../domain/battle_logic';
 
 export class BattleService {
   private state: BattleState;
@@ -10,6 +10,7 @@ export class BattleService {
       playerMonster: player,
       enemyMonster: enemy,
       turnCount: 1,
+      escapeAttempts: 1,
       isFinished: false,
       winner: null,
       message: `やせいの ${enemy.name} が とびだしてきた！`
@@ -22,6 +23,44 @@ export class BattleService {
 
   private delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async attemptEscape() {
+    if (this.state.isFinished) return;
+
+    const playerSpeed = getModifiedSpeed(this.state.playerMonster);
+    const enemySpeed = getModifiedSpeed(this.state.enemyMonster);
+
+    const success = calculateEscapeSuccess(playerSpeed, enemySpeed, this.state.escapeAttempts);
+
+    if (success) {
+      this.state.isFinished = true;
+      this.state.winner = 'ESCAPED';
+      this.state.message = "うまく にげきれた！";
+      if (this.onUpdate) this.onUpdate();
+    } else {
+      this.state.escapeAttempts++;
+      this.state.message = "にげられなかった！";
+      if (this.onUpdate) this.onUpdate();
+      await this.delay(1000);
+
+      // Enemy turn if escape fails
+      const enemyMoveInstance = this.state.enemyMonster.moves[0]!;
+      await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
+
+      if (!this.state.isFinished) {
+        await this.handleEndOfTurn(this.state.playerMonster);
+        if (!this.state.isFinished) {
+          await this.handleEndOfTurn(this.state.enemyMonster);
+        }
+      }
+
+      if (!this.state.isFinished) {
+        this.state.turnCount++;
+        this.state.message = "どうする？";
+        if (this.onUpdate) this.onUpdate();
+      }
+    }
   }
 
   async executeTurn(playerMoveInstance: MoveInstance) {

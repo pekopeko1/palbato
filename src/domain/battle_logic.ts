@@ -188,6 +188,15 @@ export function applyRest(monster: MonsterInstance): { message: string }[] {
   ];
 }
 
+export function calculateEscapeSuccess(playerSpeed: number, enemySpeed: number, attempts: number): boolean {
+  if (playerSpeed >= enemySpeed) return true;
+  
+  const f = Math.floor((playerSpeed * 128) / enemySpeed) + 30 * attempts;
+  if (f > 255) return true;
+  
+  return Math.random() * 256 < f;
+}
+
 export function processEndOfTurn(monster: MonsterInstance): { damage: number; message?: string } {
   let damage = 0;
   let message: string | undefined;

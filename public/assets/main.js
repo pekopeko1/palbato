@@ -597,6 +597,12 @@
       { message: `${monster.name} \u306F \u306D\u3080\u3063\u3066 \uFF28\uFF30\u3092 \u304B\u3044\u3075\u304F\u3057\u305F\uFF01` }
     ];
   }
+  function calculateEscapeSuccess(playerSpeed, enemySpeed, attempts) {
+    if (playerSpeed >= enemySpeed) return true;
+    const f = Math.floor(playerSpeed * 128 / enemySpeed) + 30 * attempts;
+    if (f > 255) return true;
+    return Math.random() * 256 < f;
+  }
   function processEndOfTurn(monster) {
     let damage = 0;
     let message;
@@ -622,6 +628,7 @@
         playerMonster: player,
         enemyMonster: enemy,
         turnCount: 1,
+        escapeAttempts: 1,
         isFinished: false,
         winner: null,
         message: `\u3084\u305B\u3044\u306E ${enemy.name} \u304C \u3068\u3073\u3060\u3057\u3066\u304D\u305F\uFF01`
@@ -632,6 +639,36 @@
     }
     delay(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    async attemptEscape() {
+      if (this.state.isFinished) return;
+      const playerSpeed = getModifiedSpeed(this.state.playerMonster);
+      const enemySpeed = getModifiedSpeed(this.state.enemyMonster);
+      const success = calculateEscapeSuccess(playerSpeed, enemySpeed, this.state.escapeAttempts);
+      if (success) {
+        this.state.isFinished = true;
+        this.state.winner = "ESCAPED";
+        this.state.message = "\u3046\u307E\u304F \u306B\u3052\u304D\u308C\u305F\uFF01";
+        if (this.onUpdate) this.onUpdate();
+      } else {
+        this.state.escapeAttempts++;
+        this.state.message = "\u306B\u3052\u3089\u308C\u306A\u304B\u3063\u305F\uFF01";
+        if (this.onUpdate) this.onUpdate();
+        await this.delay(1e3);
+        const enemyMoveInstance = this.state.enemyMonster.moves[0];
+        await this.processMove(this.state.enemyMonster, this.state.playerMonster, enemyMoveInstance);
+        if (!this.state.isFinished) {
+          await this.handleEndOfTurn(this.state.playerMonster);
+          if (!this.state.isFinished) {
+            await this.handleEndOfTurn(this.state.enemyMonster);
+          }
+        }
+        if (!this.state.isFinished) {
+          this.state.turnCount++;
+          this.state.message = "\u3069\u3046\u3059\u308B\uFF1F";
+          if (this.onUpdate) this.onUpdate();
+        }
+      }
     }
     async executeTurn(playerMoveInstance) {
       if (this.state.isFinished) return;
@@ -826,9 +863,15 @@
           const btn = document.createElement("div");
           btn.className = "move-btn";
           btn.innerText = opt.label;
-          btn.onclick = () => {
+          btn.onclick = async () => {
             if (opt.action === "FIGHT") showMoves(battleService, updateUI, playerMonster);
-            else alert("\u307E\u3060\u5B9F\u88C5\u3055\u308C\u3066\u3044\u307E\u305B\u3093\uFF01");
+            else if (opt.action === "RUN") {
+              ui.innerHTML = "\u30D0\u30C8\u30EB\u4E2D...";
+              await battleService.attemptEscape();
+              renderer.render(battleService.getState());
+              await new Promise((r) => setTimeout(r, 1e3));
+              updateUI();
+            } else alert("\u307E\u3060\u5B9F\u88C5\u3055\u308C\u3066\u3044\u307E\u305B\u3093\uFF01");
           };
           ui.appendChild(btn);
         });
