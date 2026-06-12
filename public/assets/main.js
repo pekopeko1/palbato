@@ -116,6 +116,18 @@
       target: "SELF"
     },
     {
+      id: "calm_mind",
+      name: "\u3081\u3044\u305D\u3046",
+      type: "PSYCHIC",
+      category: "STATUS",
+      power: 0,
+      accuracy: 100,
+      pp: 20,
+      description: "\u3053\u3053\u308D\u3092\u3000\u3057\u305A\u3081\u3066\u3000\u305B\u3044\u3057\u3093\u3092\u3000\u3057\u3085\u3046\u3061\u3085\u3046\u3055\u305B\u308B\u3002\u3058\u3076\u3093\u306E\u3000\u3068\u304F\u3053\u3046\u3068\u3000\u3068\u304F\u307C\u3046\u3092\u3000\u3042\u3052\u308B\u3002",
+      statChanges: { spAttack: 1, spDefense: 1 },
+      target: "SELF"
+    },
+    {
       id: "swords_dance",
       name: "\u3064\u308B\u304E\u306E\u307E\u3044",
       type: "NORMAL",
@@ -262,7 +274,7 @@
       learnset: [
         { level: 1, moveId: "nihil_light" },
         { level: 1, moveId: "rest" },
-        { level: 1, moveId: "amnesia" },
+        { level: 1, moveId: "calm_mind" },
         { level: 1, moveId: "swords_dance" },
         { level: 1, moveId: "hypnosis" }
       ],

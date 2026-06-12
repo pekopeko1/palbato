@@ -94,7 +94,7 @@
     "learnset": [
       { "level": 1, "moveId": "nihil_light" },
       { "level": 1, "moveId": "rest" },
-      { "level": 1, "moveId": "amnesia" },
+      { "level": 1, "moveId": "calm_mind" },
       { "level": 1, "moveId": "swords_dance" },
       { "level": 1, "moveId": "hypnosis" }
     ],

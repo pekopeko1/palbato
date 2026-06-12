@@ -113,6 +113,18 @@
     "target": "SELF"
   },
   {
+    "id": "calm_mind",
+    "name": "めいそう",
+    "type": "PSYCHIC",
+    "category": "STATUS",
+    "power": 0,
+    "accuracy": 100,
+    "pp": 20,
+    "description": "こころを　しずめて　せいしんを　しゅうちゅうさせる。じぶんの　とくこうと　とくぼうを　あげる。",
+    "statChanges": { "spAttack": 1, "spDefense": 1 },
+    "target": "SELF"
+  },
+  {
     "id": "swords_dance",
     "name": "つるぎのまい",
     "type": "NORMAL",
