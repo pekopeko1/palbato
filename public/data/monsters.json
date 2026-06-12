@@ -60,7 +60,7 @@
   {
     "id": "shidoss",
     "name": "シドッス",
-    "types": ["FAIRY"],
+    "types": ["DRAGON", "FAIRY"],
     "baseStats": {
       "hp": 12,
       "attack": 56,

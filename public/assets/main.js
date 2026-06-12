@@ -228,7 +228,7 @@
     {
       id: "shidoss",
       name: "\u30B7\u30C9\u30C3\u30B9",
-      types: ["FAIRY"],
+      types: ["DRAGON", "FAIRY"],
       baseStats: {
         hp: 12,
         attack: 56,
@@ -466,7 +466,7 @@
     BUG: { FIRE: 0.5, GRASS: 2, FIGHTING: 0.5, POISON: 0.5, FLYING: 0.5, PSYCHIC: 2, GHOST: 0.5, DARK: 2, STEEL: 0.5, FAIRY: 0.5 },
     ROCK: { FIRE: 2, ICE: 2, FIGHTING: 0.5, GROUND: 0.5, FLYING: 2, BUG: 2, STEEL: 0.5 },
     GHOST: { NORMAL: 0, PSYCHIC: 2, GHOST: 2, DARK: 0.5 },
-    DRAGON: { DRAGON: 2, STEEL: 0.5, FAIRY: 0 },
+    DRAGON: { DRAGON: 2, FAIRY: 0 },
     STEEL: { FIRE: 0.5, WATER: 0.5, ELECTRIC: 0.5, ICE: 2, ROCK: 2, STEEL: 0.5, FAIRY: 2 },
     DARK: { FIGHTING: 0.5, PSYCHIC: 2, GHOST: 2, DARK: 0.5, FAIRY: 0.5 },
     FAIRY: { FIRE: 0.5, FIGHTING: 2, POISON: 0.5, DRAGON: 2, STEEL: 0.5, DARK: 2 }

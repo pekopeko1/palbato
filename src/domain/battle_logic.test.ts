@@ -11,6 +11,15 @@ describe('battle_logic', () => {
     expect(getEffectiveness('FIRE', ['WATER', 'ROCK'])).toBe(0.25);
   });
 
+  it('should calculate dual-type effectiveness correctly (Dragon/Fairy)', () => {
+    // Poison vs Dragon/Fairy: 2 (Poison vs Fairy) * 1 (Poison vs Dragon) = 2
+    expect(getEffectiveness('POISON', ['DRAGON', 'FAIRY'])).toBe(2);
+    // Dragon vs Dragon/Fairy: 2 (Dragon vs Dragon) * 0 (Dragon vs Fairy) = 0
+    expect(getEffectiveness('DRAGON', ['DRAGON', 'FAIRY'])).toBe(0);
+    // Steel vs Dragon/Fairy: 2 (Steel vs Fairy) * 1 (Steel vs Dragon) = 2
+    expect(getEffectiveness('STEEL', ['DRAGON', 'FAIRY'])).toBe(2);
+  });
+
   it('should calculate damage with STAB and effectiveness', () => {
     const attacker: MonsterInstance = {
       definitionId: 'charmander',
