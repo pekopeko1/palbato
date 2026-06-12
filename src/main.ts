@@ -11,7 +11,7 @@ async function init() {
   const renderer = new CanvasRenderer(canvas, loader);
 
   const createInstance = (def: any, level: number): MonsterInstance => {
-    const finalLevel = (def.id === 'aruchu' || def.id === 'shidoss') ? 80 : level;
+    const finalLevel = def.id === 'shidoss' ? 50 : (def.id === 'aruchu' ? 80 : level);
     
     // Monster-like stat calculation
     const calcHP = (base: number, lvl: number) => Math.floor((base * 2 * lvl) / 100) + lvl + 10;
