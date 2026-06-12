@@ -42,6 +42,7 @@ export interface Move {
 export interface MonsterDefinition {
   id: string;
   name: string;
+  description: string;
   types: ElementType[];
   baseStats: Stats;
   learnset: { level: number; moveId: string }[];

@@ -182,6 +182,7 @@
     {
       id: "bulbasaur",
       name: "\u30D5\u30B7\u30AE\u30C0\u30CD",
+      description: "\u305B\u306A\u304B\u306B\u3000\u3057\u3087\u304F\u3076\u3064\u306E\u3000\u30BF\u30CD\u3092\u3000\u3057\u3087\u3063\u3066\u3044\u308B\u3002\u3000\u304B\u3089\u3060\u3068\u3000\u3068\u3082\u306B\u3000\u305D\u3060\u3064\u3002",
       types: ["GRASS", "POISON"],
       baseStats: {
         hp: 45,
@@ -202,6 +203,7 @@
     {
       id: "charmander",
       name: "\u30D2\u30C8\u30AB\u30B2",
+      description: "\u3042\u3064\u3044\u3082\u306E\u3092\u3000\u3053\u306E\u3080\u3000\u305B\u3044\u304B\u304F\u3002\u3000\u3057\u3063\u307D\u306E\u3000\u3055\u304D\u3067\u3000\u3072\u304C\u3000\u3082\u3048\u3066\u3044\u308B\u3002",
       types: ["FIRE"],
       baseStats: {
         hp: 39,
@@ -221,6 +223,7 @@
     {
       id: "squirtle",
       name: "\u30BC\u30CB\u30AC\u30E1",
+      description: "\u306A\u304C\u3044\u3000\u304F\u3073\u3092\u3000\u3053\u3046\u3089\u306E\u3000\u306A\u304B\u306B\u3000\u3072\u3063\u3053\u3081\u3066\u3000\u3044\u304D\u304A\u3044\u3088\u304F\u3000\u307F\u305A\u3092\u3000\u306F\u304D\u3060\u3059\u3002",
       types: ["WATER"],
       baseStats: {
         hp: 44,
@@ -240,6 +243,7 @@
     {
       id: "shidoss",
       name: "\u30B7\u30C9\u30C3\u30B9",
+      description: "\u3075\u3057\u304E\u306A\u3000\u3061\u304B\u3089\u3092\u3000\u3042\u3084\u3064\u308B\u3000\u308A\u3085\u3046\u3002\u3000\u305D\u306E\u3059\u304C\u305F\u3092\u3000\u307F\u305F\u3082\u306E\u306F\u3000\u3057\u3042\u308F\u305B\u306B\u3000\u306A\u308C\u308B\u3068\u3044\u3046\u3002",
       types: ["DRAGON", "FAIRY"],
       baseStats: {
         hp: 12,
@@ -262,6 +266,7 @@
     {
       id: "aruchu",
       name: "\u30A2\u30EB\u30C1\u30E5\u30A6",
+      description: "\u3044\u3064\u3082\u3000\u30D5\u30E9\u30D5\u30E9\u3057\u3066\u3044\u308B\u304C\u3000\u3057\u3085\u3046\u3061\u3085\u3046\u3059\u308B\u3068\u3000\u3059\u3055\u307E\u3058\u3044\u3000\u3061\u304B\u3089\u3092\u3000\u306F\u3063\u304D\u3059\u308B\u3002",
       types: ["NORMAL", "FAIRY"],
       baseStats: {
         hp: 19,
@@ -898,35 +903,57 @@
         });
       };
       const showMonsterInfo = (monster, backAction) => {
+        const def = loader.getMonster(monster.definitionId);
         const ui = document.getElementById("ui-overlay");
         ui.innerHTML = "";
         ui.style.flexDirection = "column";
         ui.style.height = "auto";
-        ui.style.background = "rgba(0,0,0,0.8)";
+        ui.style.maxHeight = "80%";
+        ui.style.top = "10%";
+        ui.style.background = "#c0392b";
+        ui.style.border = "4px solid #8e1c12";
         ui.style.padding = "10px";
-        ui.style.fontSize = "16px";
         ui.style.pointerEvents = "auto";
-        const info = document.createElement("div");
-        info.innerHTML = `
-        <div style="margin-bottom:5px;"><strong>${monster.name}</strong> Lv.${monster.level}</div>
-        <div style="margin-bottom:5px;">HP: ${monster.currentHp} / ${monster.stats.hp}</div>
-        <div style="margin-bottom:5px;">\u30BF\u30A4\u30D7: ${monster.types.join(" / ")}</div>
-        <div style="margin-top:10px; font-size:14px; line-height:1.4;">
-          \u3053\u3046\u3052\u304D: ${monster.stats.attack} / \u307C\u3046\u304E\u3087: ${monster.stats.defense}<br>
-          \u3068\u304F\u3053\u3046: ${monster.stats.spAttack} / \u3068\u304F\u307C\u3046: ${monster.stats.spDefense}<br>
-          \u3059\u3070\u3084\u3055: ${monster.stats.speed}
+        ui.style.color = "white";
+        ui.innerHTML = `
+        <div style="display:flex; margin-bottom:10px; background:#fff; color:#333; padding:5px; border-radius:5px;">
+          <img src="${def.frontSprite}" style="width:80px; height:80px; image-rendering:pixelated; background:#eee; border-radius:5px;">
+          <div style="margin-left:10px; flex:1;">
+            <div style="font-size:18px; font-weight:bold;">${monster.name}</div>
+            <div style="font-size:14px;">Lv.${monster.level}</div>
+            <div style="font-size:12px; margin-top:5px; background:#34495e; color:#fff; display:inline-block; padding:2px 5px; border-radius:3px;">
+              ${monster.types.join(" / ")}
+            </div>
+          </div>
+        </div>
+        <div style="background:#2ecc71; color:#000; padding:10px; border-radius:5px; font-size:13px; min-height:50px; margin-bottom:10px; border:2px solid #27ae60;">
+          ${def.description}
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; font-size:12px; background:rgba(0,0,0,0.3); padding:5px; border-radius:5px;">
+          <div>HP: ${monster.currentHp} / ${monster.stats.hp}</div>
+          <div>\u3053\u3046\u3052\u304D: ${monster.stats.attack}</div>
+          <div>\u307C\u3046\u304E\u3087: ${monster.stats.defense}</div>
+          <div>\u3068\u304F\u3053\u3046: ${monster.stats.spAttack}</div>
+          <div>\u3068\u304F\u307C\u3046: ${monster.stats.spDefense}</div>
+          <div>\u3059\u3070\u3084\u3055: ${monster.stats.speed}</div>
         </div>
       `;
-        ui.appendChild(info);
         const backBtn = document.createElement("div");
         backBtn.className = "move-btn";
         backBtn.style.width = "100%";
-        backBtn.style.height = "40px";
-        backBtn.style.marginTop = "15px";
-        backBtn.innerText = "\u3082\u3069\u308B";
+        backBtn.style.height = "35px";
+        backBtn.style.marginTop = "10px";
+        backBtn.style.background = "#3498db";
+        backBtn.style.border = "none";
+        backBtn.innerText = "\u3068\u3058\u308B";
         backBtn.onclick = () => {
           ui.style.flexDirection = "row";
           ui.style.height = "30%";
+          ui.style.maxHeight = "none";
+          ui.style.top = "auto";
+          ui.style.bottom = "0";
+          ui.style.background = "rgba(0,0,0,0.5)";
+          ui.style.border = "none";
           ui.style.padding = "0";
           backAction();
         };

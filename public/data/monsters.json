@@ -2,6 +2,7 @@
   {
     "id": "bulbasaur",
     "name": "フシギダネ",
+    "description": "せなかに　しょくぶつの　タネを　しょっている。　からだと　ともに　そだつ。",
     "types": ["GRASS", "POISON"],
     "baseStats": {
       "hp": 45,
@@ -22,6 +23,7 @@
   {
     "id": "charmander",
     "name": "ヒトカゲ",
+    "description": "あついものを　このむ　せいかく。　しっぽの　さきで　ひが　もえている。",
     "types": ["FIRE"],
     "baseStats": {
       "hp": 39,
@@ -41,6 +43,7 @@
   {
     "id": "squirtle",
     "name": "ゼニガメ",
+    "description": "ながい　くびを　こうらの　なかに　ひっこめて　いきおいよく　みずを　はきだす。",
     "types": ["WATER"],
     "baseStats": {
       "hp": 44,
@@ -60,6 +63,7 @@
   {
     "id": "shidoss",
     "name": "シドッス",
+    "description": "ふしぎな　ちからを　あやつる　りゅう。　そのすがたを　みたものは　しあわせに　なれるという。",
     "types": ["DRAGON", "FAIRY"],
     "baseStats": {
       "hp": 12,
@@ -82,6 +86,7 @@
   {
     "id": "aruchu",
     "name": "アルチュウ",
+    "description": "いつも　フラフラしているが　しゅうちゅうすると　すさまじい　ちからを　はっきする。",
     "types": ["NORMAL", "FAIRY"],
     "baseStats": {
       "hp": 19,

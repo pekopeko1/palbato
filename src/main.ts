@@ -136,37 +136,59 @@ async function init() {
     };
 
     const showMonsterInfo = (monster: MonsterInstance, backAction: () => void) => {
+      const def = loader.getMonster(monster.definitionId)!;
       const ui = document.getElementById('ui-overlay')!;
       ui.innerHTML = '';
       ui.style.flexDirection = 'column';
       ui.style.height = 'auto';
-      ui.style.background = 'rgba(0,0,0,0.8)';
+      ui.style.maxHeight = '80%';
+      ui.style.top = '10%';
+      ui.style.background = '#c0392b';
+      ui.style.border = '4px solid #8e1c12';
       ui.style.padding = '10px';
-      ui.style.fontSize = '16px';
       ui.style.pointerEvents = 'auto';
+      ui.style.color = 'white';
 
-      const info = document.createElement('div');
-      info.innerHTML = `
-        <div style="margin-bottom:5px;"><strong>${monster.name}</strong> Lv.${monster.level}</div>
-        <div style="margin-bottom:5px;">HP: ${monster.currentHp} / ${monster.stats.hp}</div>
-        <div style="margin-bottom:5px;">タイプ: ${monster.types.join(' / ')}</div>
-        <div style="margin-top:10px; font-size:14px; line-height:1.4;">
-          こうげき: ${monster.stats.attack} / ぼうぎょ: ${monster.stats.defense}<br>
-          とくこう: ${monster.stats.spAttack} / とくぼう: ${monster.stats.spDefense}<br>
-          すばやさ: ${monster.stats.speed}
+      ui.innerHTML = `
+        <div style="display:flex; margin-bottom:10px; background:#fff; color:#333; padding:5px; border-radius:5px;">
+          <img src="${def.frontSprite}" style="width:80px; height:80px; image-rendering:pixelated; background:#eee; border-radius:5px;">
+          <div style="margin-left:10px; flex:1;">
+            <div style="font-size:18px; font-weight:bold;">${monster.name}</div>
+            <div style="font-size:14px;">Lv.${monster.level}</div>
+            <div style="font-size:12px; margin-top:5px; background:#34495e; color:#fff; display:inline-block; padding:2px 5px; border-radius:3px;">
+              ${monster.types.join(' / ')}
+            </div>
+          </div>
+        </div>
+        <div style="background:#2ecc71; color:#000; padding:10px; border-radius:5px; font-size:13px; min-height:50px; margin-bottom:10px; border:2px solid #27ae60;">
+          ${def.description}
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; font-size:12px; background:rgba(0,0,0,0.3); padding:5px; border-radius:5px;">
+          <div>HP: ${monster.currentHp} / ${monster.stats.hp}</div>
+          <div>こうげき: ${monster.stats.attack}</div>
+          <div>ぼうぎょ: ${monster.stats.defense}</div>
+          <div>とくこう: ${monster.stats.spAttack}</div>
+          <div>とくぼう: ${monster.stats.spDefense}</div>
+          <div>すばやさ: ${monster.stats.speed}</div>
         </div>
       `;
-      ui.appendChild(info);
 
       const backBtn = document.createElement('div');
       backBtn.className = 'move-btn';
       backBtn.style.width = '100%';
-      backBtn.style.height = '40px';
-      backBtn.style.marginTop = '15px';
-      backBtn.innerText = 'もどる';
+      backBtn.style.height = '35px';
+      backBtn.style.marginTop = '10px';
+      backBtn.style.background = '#3498db';
+      backBtn.style.border = 'none';
+      backBtn.innerText = 'とじる';
       backBtn.onclick = () => {
         ui.style.flexDirection = 'row';
         ui.style.height = '30%';
+        ui.style.maxHeight = 'none';
+        ui.style.top = 'auto';
+        ui.style.bottom = '0';
+        ui.style.background = 'rgba(0,0,0,0.5)';
+        ui.style.border = 'none';
         ui.style.padding = '0';
         backAction();
       };
