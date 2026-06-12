@@ -82,7 +82,7 @@
   {
     "id": "aruchu",
     "name": "アルチュウ",
-    "types": ["NORMAL"],
+    "types": ["NORMAL", "FAIRY"],
     "baseStats": {
       "hp": 19,
       "attack": 10,

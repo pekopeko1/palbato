@@ -250,7 +250,7 @@
     {
       id: "aruchu",
       name: "\u30A2\u30EB\u30C1\u30E5\u30A6",
-      types: ["NORMAL"],
+      types: ["NORMAL", "FAIRY"],
       baseStats: {
         hp: 19,
         attack: 10,
@@ -781,7 +781,7 @@
     const canvas = document.getElementById("game-canvas");
     const renderer = new CanvasRenderer(canvas, loader);
     const createInstance = (def, level) => {
-      const finalLevel = def.id === "shidoss" ? 50 : def.id === "aruchu" ? 80 : level;
+      const finalLevel = def.id === "shidoss" ? 30 : def.id === "aruchu" ? 80 : level;
       const calcHP = (base, lvl) => Math.floor(base * 2 * lvl / 100) + lvl + 10;
       const calcOther = (base, lvl) => Math.floor(base * 2 * lvl / 100) + 5;
       const stats = {
