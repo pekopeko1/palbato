@@ -879,10 +879,46 @@
               renderer.render(battleService.getState());
               await new Promise((r) => setTimeout(r, 1e3));
               updateUI();
-            } else alert("\u307E\u3060\u5B9F\u88C5\u3055\u308C\u3066\u3044\u307E\u305B\u3093\uFF01");
+            } else if (opt.action === "MON") showMonsterInfo(playerMonster, updateUI);
+            else alert("\u307E\u3060\u5B9F\u88C5\u3055\u308C\u3066\u3044\u307E\u305B\u3093\uFF01");
           };
           ui.appendChild(btn);
         });
+      };
+      const showMonsterInfo = (monster, backAction) => {
+        const ui = document.getElementById("ui-overlay");
+        ui.innerHTML = "";
+        ui.style.flexDirection = "column";
+        ui.style.height = "auto";
+        ui.style.background = "rgba(0,0,0,0.8)";
+        ui.style.padding = "10px";
+        ui.style.fontSize = "16px";
+        ui.style.pointerEvents = "auto";
+        const info = document.createElement("div");
+        info.innerHTML = `
+        <div style="margin-bottom:5px;"><strong>${monster.name}</strong> Lv.${monster.level}</div>
+        <div style="margin-bottom:5px;">HP: ${monster.currentHp} / ${monster.stats.hp}</div>
+        <div style="margin-bottom:5px;">\u30BF\u30A4\u30D7: ${monster.types.join(" / ")}</div>
+        <div style="margin-top:10px; font-size:14px; line-height:1.4;">
+          \u3053\u3046\u3052\u304D: ${monster.stats.attack} / \u307C\u3046\u304E\u3087: ${monster.stats.defense}<br>
+          \u3068\u304F\u3053\u3046: ${monster.stats.spAttack} / \u3068\u304F\u307C\u3046: ${monster.stats.spDefense}<br>
+          \u3059\u3070\u3084\u3055: ${monster.stats.speed}
+        </div>
+      `;
+        ui.appendChild(info);
+        const backBtn = document.createElement("div");
+        backBtn.className = "move-btn";
+        backBtn.style.width = "100%";
+        backBtn.style.height = "40px";
+        backBtn.style.marginTop = "15px";
+        backBtn.innerText = "\u3082\u3069\u308B";
+        backBtn.onclick = () => {
+          ui.style.flexDirection = "row";
+          ui.style.height = "30%";
+          ui.style.padding = "0";
+          backAction();
+        };
+        ui.appendChild(backBtn);
       };
       const showMoves = (service, updateUI2, playerMonster2) => {
         const ui = document.getElementById("ui-overlay");

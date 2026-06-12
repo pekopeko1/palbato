@@ -128,10 +128,49 @@ async function init() {
             await new Promise(r => setTimeout(r, 1000));
             updateUI();
           }
+          else if (opt.action === 'MON') showMonsterInfo(playerMonster, updateUI);
           else alert('まだ実装されていません！');
         };
         ui.appendChild(btn);
       });
+    };
+
+    const showMonsterInfo = (monster: MonsterInstance, backAction: () => void) => {
+      const ui = document.getElementById('ui-overlay')!;
+      ui.innerHTML = '';
+      ui.style.flexDirection = 'column';
+      ui.style.height = 'auto';
+      ui.style.background = 'rgba(0,0,0,0.8)';
+      ui.style.padding = '10px';
+      ui.style.fontSize = '16px';
+      ui.style.pointerEvents = 'auto';
+
+      const info = document.createElement('div');
+      info.innerHTML = `
+        <div style="margin-bottom:5px;"><strong>${monster.name}</strong> Lv.${monster.level}</div>
+        <div style="margin-bottom:5px;">HP: ${monster.currentHp} / ${monster.stats.hp}</div>
+        <div style="margin-bottom:5px;">タイプ: ${monster.types.join(' / ')}</div>
+        <div style="margin-top:10px; font-size:14px; line-height:1.4;">
+          こうげき: ${monster.stats.attack} / ぼうぎょ: ${monster.stats.defense}<br>
+          とくこう: ${monster.stats.spAttack} / とくぼう: ${monster.stats.spDefense}<br>
+          すばやさ: ${monster.stats.speed}
+        </div>
+      `;
+      ui.appendChild(info);
+
+      const backBtn = document.createElement('div');
+      backBtn.className = 'move-btn';
+      backBtn.style.width = '100%';
+      backBtn.style.height = '40px';
+      backBtn.style.marginTop = '15px';
+      backBtn.innerText = 'もどる';
+      backBtn.onclick = () => {
+        ui.style.flexDirection = 'row';
+        ui.style.height = '30%';
+        ui.style.padding = '0';
+        backAction();
+      };
+      ui.appendChild(backBtn);
     };
 
     const showMoves = (service: BattleService, updateUI: () => void, playerMonster: MonsterInstance) => {
