@@ -40,10 +40,13 @@ async function init() {
         spDefense: 0,
         speed: 0
       },
-      moves: def.learnset.map((l: any) => {
-        const move = loader.getMove(l.moveId);
-        return move ? { move, currentPp: move.pp } : null;
-      }).filter((m: any) => m !== null),
+      moves: def.learnset
+        .filter((l: any) => l.level <= finalLevel)
+        .slice(0, 4)
+        .map((l: any) => {
+          const move = loader.getMove(l.moveId);
+          return move ? { move, currentPp: move.pp } : null;
+        }).filter((m: any) => m !== null),
       status: 'NONE'
     };
   };

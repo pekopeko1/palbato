@@ -806,7 +806,7 @@
           spDefense: 0,
           speed: 0
         },
-        moves: def.learnset.map((l) => {
+        moves: def.learnset.filter((l) => l.level <= finalLevel).slice(0, 4).map((l) => {
           const move = loader.getMove(l.moveId);
           return move ? { move, currentPp: move.pp } : null;
         }).filter((m) => m !== null),
